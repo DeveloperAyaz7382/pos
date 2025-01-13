@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <h1>Delete Item Type</h1>
+    <p>Are you sure you want to delete "{{ item_type.type_name }}"?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Yes, Delete</button>
+    </form>
+    <a href="{% url 'item_type_list' %}">Cancel</a>
+    {% endblock %}

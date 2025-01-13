@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add/Edit Order Item</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">
+            {% if order_item %}
+                Edit Order Item
+            {% else %}
+                Add Order Item
+            {% endif %}
+        </h1>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Order Field -->
+            <div class="mb-3">
+                <label for="order_id" class="form-label">Order:</label>
+                <select class="form-select" name="order_id" id="order_id" required>
+                    {% for order in orders %}
+                        <option value="{{ order.pk }}" {% if order_item and order_item.order.pk == order.pk %}selected{% endif %}>
+                            {{ order.order_customer_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <!-- Item Field -->
+            <div class="mb-3">
+                <label for="item_id" class="form-label">Item:</label>
+                <select class="form-select" name="item_id" id="item_id" required>
+                    {% for item in items %}
+                        <option value="{{ item.pk }}" {% if order_item and order_item.item.pk == item.pk %}selected{% endif %}>
+                            {{ item.item_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <!-- Quantity Field -->
+            <div class="mb-3">
+                <label for="order_item_quantity" class="form-label">Quantity:</label>
+                <input 
+                    type="number" 
+                    class="form-control" 
+                    name="order_item_quantity" 
+                    id="order_item_quantity" 
+                    value="{% if order_item %}{{ order_item.order_item_quantity }}{% else %}0{% endif %}" 
+                    required>
+            </div>
+        
+            <!-- Unit Price Field -->
+            <div class="mb-3">
+                <label for="order_item_unitprice" class="form-label">Unit Price:</label>
+                <input 
+                    type="number" 
+                    step="0.01" 
+                    class="form-control" 
+                    name="order_item_unitprice" 
+                    id="order_item_unitprice" 
+                    value="{% if order_item %}{{ order_item.order_item_unitprice }}{% else %}0.00{% endif %}" 
+                    required>
+            </div>
+        
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        
+    </div>
+</body>
+</html>

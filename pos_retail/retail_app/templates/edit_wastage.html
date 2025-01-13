@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wastage Form</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>{{ form.instance.wastage_id|default:"Create" }} Wastage Report</h2>
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Item Field -->
+            <div class="form-group">
+                <label for="item">Item</label>
+                <select class="form-control" id="item" name="item" required>
+                    {% for item in inventory_items %}
+                        <option value="{{ item.id }}" {% if item.id == form.instance.item.id %}selected{% endif %}>{{ item.item_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Quantity Ordered Field -->
+            <div class="form-group">
+                <label for="quantity_ordered">Quantity Ordered</label>
+                <input type="number" class="form-control" id="quantity_ordered" name="quantity_ordered" value="{{ form.quantity_ordered.value }}" required>
+            </div>
+
+            <!-- Quantity Received Field -->
+            <div class="form-group">
+                <label for="quantity_received">Quantity Received</label>
+                <input type="number" class="form-control" id="quantity_received" name="quantity_received" value="{{ form.quantity_received.value }}" required>
+            </div>
+
+            <!-- Quantity Wasted Field -->
+            <div class="form-group">
+                <label for="quantity_wasted">Quantity Wasted</label>
+                <input type="number" class="form-control" id="quantity_wasted" name="quantity_wasted" value="{{ form.quantity_wasted.value }}" required>
+            </div>
+
+            <!-- Reason for Wastage Field -->
+            <div class="form-group">
+                <label for="reason_for_wastage">Reason for Wastage</label>
+                <select class="form-control" id="reason_for_wastage" name="reason_for_wastage" required>
+                    <option value="Damage" {% if form.reason_for_wastage.value == 'Damage' %}selected{% endif %}>Damage</option>
+                    <option value="Spoilage" {% if form.reason_for_wastage.value == 'Spoilage' %}selected{% endif %}>Spoilage</option>
+                    <option value="Expiration" {% if form.reason_for_wastage.value == 'Expiration' %}selected{% endif %}>Expiration</option>
+                    <option value="Other" {% if form.reason_for_wastage.value == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+
+            <!-- Return Status Field -->
+            <div class="form-group">
+                <label for="return_status">Return Status</label>
+                <select class="form-control" id="return_status" name="return_status" required>
+                    <option value="Pending" {% if form.return_status.value == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Approved" {% if form.return_status.value == 'Approved' %}selected{% endif %}>Approved</option>
+                    <option value="Returned" {% if form.return_status.value == 'Returned' %}selected{% endif %}>Returned</option>
+                </select>
+            </div>
+
+            <!-- Remarks Field -->
+            <div class="form-group">
+                <label for="remarks">Remarks</label>
+                <textarea class="form-control" id="remarks" name="remarks" rows="3">{{ form.remarks.value }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            {% if form.instance.wastage_id %}
+                <a href="{% url 'wastage_report' form.instance.wastage_id %}" class="btn btn-danger ml-2">Delete</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Include Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2>Wastage Report</h2>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'wastage_report' wastage_id=wastage.wastage_id if wastage_id else '' %}">
+            {% csrf_token %}
+
+            <!-- Item Field -->
+            <div class="form-group">
+                <label for="item">Item</label>
+                <select name="item_id" class="form-control">
+                    {% for item in items %}
+                        <option value="{{ item.item_id }}" {% if wastage.item_id == item.item_id %} selected {% endif %}>
+                            {{ item.item_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Quantity Ordered Field -->
+            <div class="form-group">
+                <label for="quantity_ordered">Quantity Ordered</label>
+                <input type="number" class="form-control" id="quantity_ordered" name="quantity_ordered" value="{{ wastage.quantity_ordered if wastage_id else '' }}" required>
+            </div>
+
+            <!-- Quantity Received Field -->
+            <div class="form-group">
+                <label for="quantity_received">Quantity Received</label>
+                <input type="number" class="form-control" id="quantity_received" name="quantity_received" value="{{ wastage.quantity_received if wastage_id else '' }}" required>
+            </div>
+
+            <!-- Quantity Wasted Field -->
+            <div class="form-group">
+                <label for="quantity_wasted">Quantity Wasted</label>
+                <input type="number" class="form-control" id="quantity_wasted" name="quantity_wasted" value="{{ wastage.quantity_wasted if wastage_id else '' }}" required>
+            </div>
+
+            <!-- Reason for Wastage Field -->
+            <div class="form-group">
+                <label for="reason_for_wastage">Reason for Wastage</label>
+                <select class="form-control" id="reason_for_wastage" name="reason_for_wastage" required>
+                    <option value="Damage" {% if wastage.reason_for_wastage == 'Damage' %} selected {% endif %}>Damage</option>
+                    <option value="Spoilage" {% if wastage.reason_for_wastage == 'Spoilage' %} selected {% endif %}>Spoilage</option>
+                    <option value="Expiration" {% if wastage.reason_for_wastage == 'Expiration' %} selected {% endif %}>Expiration</option>
+                    <option value="Other" {% if wastage.reason_for_wastage == 'Other' %} selected {% endif %}>Other</option>
+                </select>
+            </div>
+
+            <!-- Return Status Field -->
+            <div class="form-group">
+                <label for="return_status">Return Status</label>
+                <select class="form-control" id="return_status" name="return_status" required>
+                    <option value="Pending" {% if wastage.return_status == 'Pending' %} selected {% endif %}>Pending</option>
+                    <option value="Approved" {% if wastage.return_status == 'Approved' %} selected {% endif %}>Approved</option>
+                    <option value="Returned" {% if wastage.return_status == 'Returned' %} selected {% endif %}>Returned</option>
+                </select>
+            </div>
+
+            <!-- Remarks Field -->
+            <div class="form-group">
+                <label for="remarks">Remarks</label>
+                <textarea class="form-control" id="remarks" name="remarks" rows="3">{{ wastage.remarks if wastage_id else '' }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    {% endblock %}

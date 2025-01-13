@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Stock Expiry List</h1>
+        <a href="{% url 'stock_expiry_form' %}" class="btn btn-primary mb-3">Add New Expiry Record</a>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Manufacture Date</th>
+                    <th>Expiry Date</th>
+                    <th>Quantity Expired</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expiry in expiries %}
+                    <tr>
+                        <td>{{ expiry.item.item_name }}</td>
+                        <td>{{ expiry.manufacture_date }}</td>
+                        <td>{{ expiry.expiry_date }}</td>
+                        <td>{{ expiry.quantity_expiry }}</td>
+                        <td>{{ expiry.expiry_status }}</td>
+                        <td>
+                            <a href="{% url 'stock_expiry_edit' expiry.expiry_id %}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="{% url 'stock_expiry_delete' expiry.expiry_id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endblock %}

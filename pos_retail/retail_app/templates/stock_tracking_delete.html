@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Are you sure you want to delete this stock tracking record?</h1>
+        <div class="card">
+            <div class="card-body">
+                <p><strong>Item:</strong> {{ tracking.item.item_name }}</p>
+                <p><strong>Stock In:</strong> {{ tracking.tracking_stock_in }}</p>
+                <p><strong>Stock Out:</strong> {{ tracking.tracking_stock_out }}</p>
+                <p><strong>Current Stock:</strong> {{ tracking.tracking_current_stock }}</p>
+                <p><strong>Remarks:</strong> {{ tracking.tracking_remarks }}</p>
+            </div>
+        </div>
+        <form method="post" action="">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger mt-3">Delete</button>
+            <a href="{% url 'stock_tracking_list' %}" class="btn btn-secondary mt-3">Cancel</a>
+        </form>
+    </div>
+    {% endblock %}

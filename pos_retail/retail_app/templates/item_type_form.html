@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>{{ action }} Item Type</h1>
+
+        <!-- Form Start -->
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="type_name">Name:</label>
+                <input type="text" id="type_name" name="type_name" class="form-control" value="{{ item_type.type_name|default_if_none:'' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="type_description">Description:</label>
+                <textarea id="type_description" name="type_description" class="form-control" rows="4" required>{{ item_type.type_description|default_if_none:'' }}</textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">{{ action }}</button>
+        </form>
+        
+        {% comment %} <a href="{% url 'item_type_list' %}" class="btn btn-secondary mt-3">Back to List</a> {% endcomment %}
+    </div>
+
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Item Types</h1>
+       
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in item_types %}
+                <tr>
+                    <td>{{ item.type_id }}</td>
+                    <td>{{ item.type_name }}</td>
+                    <td>{{ item.type_description }}</td>
+                    <td>
+                        <a href="{% url 'item_type_update' item.type_id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'item_type_delete' item.type_id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endblock %}

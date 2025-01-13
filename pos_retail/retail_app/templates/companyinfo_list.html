@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Add Item Type Form -->
+    <div class="card p-4 mb-5 shadow-sm">
+        <h4 class="mb-3">Add Company</h4>
+        <form method="POST" action="{% url 'companyinfo_create' %}">
+            {% csrf_token %}
+            {% if messages %}
+                <div class="alert alert-{{ messages.0.tags }}">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label for="company_name" class="form-label">Company Name</label>
+                    <input type="text" class="form-control" id="company_name" name="company_name" value="{{ company_name.company_name|default:"" }}" required>
+                </div>
+                <div class="col-md-12">
+                    <label for="company_contact" class="form-label">Company Contact</label>
+                    <input type="text" class="form-control" id="company_contact" name="company_contact" value="{{ company_contact.company_contact|default:"" }}" required>
+                </div>
+                <div class="col-md-12">
+                    <label for="company_email" class="form-label">Company Email</label>
+                    <input type="email" class="form-control" id="company_email" name="company_email" value="{{ company_email.company_email|default:"" }}" required>
+                </div>
+                <div class="col-md-12">
+                    <label for="company_address" class="form-label">Company Address</label>
+                    <textarea id="company_address" name="company_address" class="form-control" rows="4" value="{{ company_address.company_address|default:"" }}" required></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Add Company</button>
+        </form>
+    </div>
+
+    <!-- Types Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-light  text-white">
+            <h5 class="mb-0" >Company List</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered ">
+                <thead class="table-light">
+                    <tr>
+                        <th>Company ID</th>
+                        <th>Company Name</th>
+                        <th>Contact</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for company in companies %}
+                    <tr>
+                        <td>{{ company.company_id }}</td>
+                        <td>{{ company.company_name }}</td>
+                        <td>{{ company.company_contact }}</td>
+                        <td>{{ company.company_email }}</td>
+                        <td>{{ company.company_address }}</td>
+                        <td>
+                            <a href="{% url 'companyinfo_update' company.company_id %}" class="text-dark">
+                                <i class="fas fa-edit"></i> 
+                            </a>
+                            <a href="{% url 'companyinfo_delete' company.company_id %}" class="text-dark">
+                                <i class="fas fa-trash"></i> 
+                            </a>
+                            <a href="{% url 'create_salesman' company.company_id %}" class="text-dark">
+                                <i class="fas fa-user-plus"></i> 
+                            </a>
+                            
+                                
+                                
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No Company available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

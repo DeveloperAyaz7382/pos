@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Add Salesman Form -->
+    <div class="card p-4 mb-5 shadow-sm">
+        <h4 class="mb-3">Add Salesman for {{ company.company_name }}</h4>
+        <form method="POST">
+            {% csrf_token %}
+            {% if messages %}
+                <div class="alert alert-{{ messages.0.tags }}">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label for="salesman_name" class="form-label">Salesman Name</label>
+                    <input type="text" class="form-control" id="salesman_name" name="salesman_name" value="{{ request.POST.salesman_name }}" required>
+                </div>
+                <div class="col-md-12">
+                    <label for="salesman_contact" class="form-label">Salesman Contact</label>
+                    <input type="text" class="form-control" id="salesman_contact" name="salesman_contact" value="{{ request.POST.salesman_contact }}" required>
+                </div>
+                <div class="col-md-12">
+                    <label for="company" class="form-label">Salesman Company</label>
+                    <select class="form-control" id="company" name="company" disabled>
+                        <option value="{{ company.company_id }}" selected>
+                            {{ company.company_name }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Add Salesman</button>
+        </form>
+    </div>
+
+    <!-- Salesmen List -->
+    {% comment %} <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5>Salesman List</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Salesman ID</th>
+                        <th>Salesman Name</th>
+                        <th>Salesman Contact</th>
+                        <th>Salesman Company</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for salesman in salesmen %}
+                    <tr>
+                        <td>{{ salesman.salesman_id }}</td>
+                        <td>{{ salesman.salesman_name }}</td>
+                        <td>{{ salesman.salesman_contact }}</td>
+                        <td>
+                            {% if salesman.company_id %}
+                                {{ salesman.company.company_name }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'salesman_edit' salesman.salesman_id %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'salesman_delete' salesman.salesman_id %}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No salesmen found for this company.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> {% endcomment %}
+
+
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5>Salesmen List</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Salesman ID</th>
+                        <th>Salesman Name</th>
+                        <th>Contact</th>
+                        <th>Company</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for salesman in salesmen %}
+<tr>
+    <td>{{ salesman.salesman_id }}</td>
+    <td>{{ salesman.salesman_name }}</td>
+    <td>{{ salesman.salesman_contact }}</td>
+    <td>
+        {% if salesman.company %}
+            {{ salesman.company.company_name }}
+        {% else %}
+            Not Assigned
+        {% endif %}
+    </td>
+    <td>
+        <a href="{% url 'salesman_edit' salesman.salesman_id %}" class="btn btn-warning btn-sm">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+        <a href="{% url 'salesman_delete' salesman.salesman_id %}" class="btn btn-danger btn-sm">
+            <i class="fas fa-trash"></i> Delete
+        </a>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5" class="text-center">No salesmen found.</td>
+</tr>
+{% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

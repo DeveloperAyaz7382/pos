@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card p-4 shadow-sm">
+        <h4 class="mb-3 text-danger">Delete Salesman</h4>
+        <p>Are you sure you want to delete the salesman <strong>{{ salesman.salesman_name }}</strong>?</p>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'salesman_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

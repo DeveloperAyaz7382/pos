@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Add Item Type Form -->
+    <div class="card p-4 mb-5 shadow-sm">
+        <h4 class="mb-3">Add Inventory</h4>
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="item_name" class="form-label">Item Name</label>
+                <input type="text" class="form-control" id="item_name" name="item_name"
+                    value="{% if inventory %}{{ inventory.item_name }}{% endif %}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="type_id" class="form-label">Item Type</label>
+                <select class="form-select" id="type_id" name="type_id" required>
+                    <option value="" disabled {% if not inventory %}selected{% endif %}>Select Type</option>
+                    {% for type in types %}
+                        <option value="{{ type.type_id }}" {% if inventory and inventory.type_id_id == type.type_id %}selected{% endif %}>
+                            {{ type.type_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="company_id" class="form-label">Company</label>
+                <select class="form-select" id="company_id" name="company_id" required>
+                    <option value="" disabled {% if not inventory %}selected{% endif %}>Select Company</option>
+                    {% for company in companies %}
+                        <option value="{{ company.company_id }}" {% if inventory and inventory.company_id_id == company.company_id %}selected{% endif %}>
+                            {{ company.company_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+
+            <div class="mb-3">
+                <label for="item_status" class="form-label">Status</label>
+                <select class="form-select" id="item_status" name="item_status" required>
+                    <option value="1" {% if not inventory or inventory.item_status == 1 %}selected{% endif %}>Active</option>
+                    <option value="0" {% if inventory and inventory.item_status == 0 %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <!-- Inventory List Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-light text-white">
+            <h5>Inventory List</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Item ID</th>
+                        <th>Item Name</th>
+                        <th>Type</th>
+                        <th>Company</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.item_id }}</td>
+                        <td>{{ item.item_name }}</td>
+                        <td>{{ item.type_id }}</td>
+                        <td>{{ item.company_id }}</td>
+                        <td>{{ item.get_item_status_display }}</td>
+                        <td>
+                            <a href="{% url 'edit_inventory' item.item_id %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'delete_inventory' item.item_id %}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No Inventory items available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

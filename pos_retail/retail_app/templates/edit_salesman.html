@@ -1,0 +1,30 @@
+{% comment %} {% extends 'base.html' %} {% endcomment %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card p-4 shadow-sm">
+        <h4 class="mb-3">Edit Salesman</h4>
+        <form method="POST">
+            {% csrf_token %}
+            {% if messages %}
+                <div class="alert alert-{{ messages.0.tags }}">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="mb-3">
+                <label for="salesman_name" class="form-label">Salesman Name</label>
+                <input type="text" class="form-control" id="salesman_name" name="salesman_name" value="{{ salesman.salesman_name }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="salesman_contact" class="form-label">Salesman Contact</label>
+                <input type="text" class="form-control" id="salesman_contact" name="salesman_contact" value="{{ salesman.salesman_contact }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Salesman</button>
+            <a href="{% url 'salesman_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Are you sure you want to delete this order item?</h1>
+        <p><strong>Order:</strong> {{ order_item.order_id.order_customer_name }}</p>
+        <p><strong>Item:</strong> {{ order_item.item_id.item_name }}</p>
+        <p><strong>Quantity:</strong> {{ order_item.order_item_quantity }}</p>
+        <p><strong>Unit Price:</strong> {{ order_item.order_item_unitprice }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'order_item_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    {% endblock %}
+

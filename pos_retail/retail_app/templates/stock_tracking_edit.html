@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Edit Stock Tracking</h1>
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="item_id" class="form-label">Select Item</label>
+                <select class="form-select" id="item_id" name="item_id" required>
+                    {% for item in items %}
+                        <option value="{{ item.item_id }}" {% if item.item_id == tracking.item.item_id %} selected {% endif %}>{{ item.item_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="tracking_stock_in" class="form-label">Stock In</label>
+                <input type="number" class="form-control" id="tracking_stock_in" name="tracking_stock_in" value="{{ tracking.tracking_stock_in }}">
+            </div>
+            <div class="mb-3">
+                <label for="tracking_stock_out" class="form-label">Stock Out</label>
+                <input type="number" class="form-control" id="tracking_stock_out" name="tracking_stock_out" value="{{ tracking.tracking_stock_out }}">
+            </div>
+            <div class="mb-3">
+                <label for="tracking_current_stock" class="form-label">Current Stock</label>
+                <input type="number" class="form-control" id="tracking_current_stock" name="tracking_current_stock" value="{{ tracking.tracking_current_stock }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="tracking_remarks" class="form-label">Remarks</label>
+                <textarea class="form-control" id="tracking_remarks" name="tracking_remarks">{{ tracking.tracking_remarks }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+    {% endblock %}

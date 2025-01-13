@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Are you sure you want to delete {{ company.company_name }}?</h1>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'companyinfo_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    {% endblock %}

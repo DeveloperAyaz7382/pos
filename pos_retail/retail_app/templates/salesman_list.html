@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5>Salesmen List</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Salesman ID</th>
+                        <th>Salesman Name</th>
+                        <th>Contact</th>
+                        <th>Company</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for salesman in salesmen %}
+                    <tr>
+                        <td>{{ salesman.salesman_id }}</td>
+                        <td>{{ salesman.salesman_name }}</td>
+                        <td>{{ salesman.salesman_contact }}</td>
+                         {% comment %} <td>{{ salesman.company_id }}</td> {% endcomment %}
+                        <td>{{ salesman.company.company_name }}</td>
+
+                        {% comment %} <td>
+                            {% if salesman.company_id %}
+                                {{ salesman.company.company_name }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}
+                        </td> {% endcomment %}
+                        <td>
+                            <a href="{% url 'salesman_edit' salesman.salesman_id %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'salesman_delete' salesman.salesman_id %}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No salesmen found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

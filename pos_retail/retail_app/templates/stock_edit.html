@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Edit Stock</h1>
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="item_id" class="form-label">Select Item</label>
+                <select class="form-select" id="item_id" name="item_id" required>
+                    {% for item in inventory_items %}
+                        <option value="{{ item.item_id }}" {% if item == stock.item %}selected{% endif %}>
+                            {{ item.item_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="salesman_id" class="form-label">Select Salesman</label>
+                <select class="form-select" id="salesman_id" name="salesman_id" required>
+                    {% for salesman in salesmen %}
+                        <option value="{{ salesman.salesman_id }}" {% if salesman == stock.salesman %}selected{% endif %}>
+                            {{ salesman.salesman_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="stock_quantity" class="form-label">Stock Quantity</label>
+                <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" value="{{ stock.stock_quantity }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="stock_unitprice" class="form-label">Unit Price</label>
+                <input type="number" step="0.01" class="form-control" id="stock_unitprice" name="stock_unitprice" value="{{ stock.stock_unitprice }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+    {% endblock %}

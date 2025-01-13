@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Stock Tracking List</h1>
+        <a href="{% url 'stock_tracking_form' %}" class="btn btn-primary mb-3">Add New Tracking</a>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Item</th>
+                    <th>Stock In</th>
+                    <th>Stock Out</th>
+                    <th>Current Stock</th>
+                    <th>Date</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tracking in trackings %}
+                    <tr>
+                        <td>{{ tracking.tracking_id }}</td>
+                        <td>{{ tracking.item_id }}</td>
+                        <td>{{ tracking.tracking_stock_in }}</td>
+                        <td>{{ tracking.tracking_stock_out }}</td>
+                        <td>{{ tracking.tracking_current_stock }}</td>
+                        <td>{{ tracking.tracking_transaction_date }}</td>
+                        <td>{{ tracking.tracking_remarks }}</td>
+                        <td>
+                            <a href="{% url 'stock_tracking_edit' tracking.tracking_id %}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="{% url 'stock_tracking_delete' tracking.tracking_id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endblock %}

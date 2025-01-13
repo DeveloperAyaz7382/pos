@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+
+<!-- Content Start -->
+
+<!-- Dashboard Section Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <!-- Card: Low Stock Alert -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="card text-white bg-gradient-danger shadow-sm h-100">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fa fa-exclamation-circle fa-3x"></i>
+                    <div class="ms-3">
+                        <h6 class="fw-bold mb-1">Low Stock Alert</h6>
+                        <p class="fw-semibold fs-5 mb-0">5 Products</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Total Sales Today -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="card text-white bg-gradient-warning shadow-sm h-100">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fa fa-dollar-sign fa-3x"></i>
+                    <div class="ms-3">
+                        <h6 class="fw-bold mb-1">Total Sales Today</h6>
+                        <p class="fw-semibold fs-5 mb-0">$2,345</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Pending Orders -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="card text-white bg-gradient-primary shadow-sm h-100">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fa fa-cart-arrow-down fa-3x"></i>
+                    <div class="ms-3">
+                        <h6 class="fw-bold mb-1">Pending Orders</h6>
+                        <p class="fw-semibold fs-5 mb-0">2 Orders</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Customer Loyalty -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="card text-white bg-gradient-success shadow-sm h-100">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fa fa-users fa-3x"></i>
+                    <div class="ms-3">
+                        <h6 class="fw-bold mb-1">Loyalty Members</h6>
+                        <p class="fw-semibold fs-5 mb-0">125 Members</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Dashboard Section End -->
+
+<!-- Expanded Components Section Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <!-- Alerts & Notifications -->
+        <div class="col-sm-12 col-xl-4">
+            <div class="card bg-light shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Alerts & Notifications</h6>
+                    <a href="#" class="btn btn-link p-0">Mark All Read</a>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fa fa-pills text-danger me-2"></i>Low stock: Vitamin D</span>
+                            <span class="badge bg-warning text-dark">5 Left</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fa fa-user-md text-primary me-2"></i>New Prescription Received</span>
+                            <span class="badge bg-info">10:30 AM</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fa fa-user-check text-success me-2"></i>New Loyalty Member Joined</span>
+                            <span class="badge bg-success">Today</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Performance -->
+        <div class="col-sm-12 col-xl-8">
+            <div class="card bg-light shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Product Performance</h6>
+                    <a href="#" class="btn btn-link p-0">Show All</a>
+                </div>
+                <div class="card-body">
+                    <canvas id="product-performance-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <!-- Expense Tracker -->
+        <div class="col-sm-12 col-xl-6">
+            <div class="card bg-light shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Expense Tracker</h6>
+                    <a href="#" class="btn btn-link p-0">Add Expense</a>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-12-02</td>
+                                <td>Supplies</td>
+                                <td>$500</td>
+                            </tr>
+                            <tr>
+                                <td>2024-12-01</td>
+                                <td>Maintenance</td>
+                                <td>$120</td>
+                            </tr>
+                            <tr>
+                                <td>2024-11-30</td>
+                                <td>Utilities</td>
+                                <td>$300</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trending Products -->
+        <div class="col-sm-12 col-xl-6">
+            <div class="card bg-light shadow-sm h-100">
+                <div class="card-header">
+                    <h6 class="mb-0">Trending Products</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fa fa-pills text-primary me-2"></i>Vitamin C Tablets</span>
+                            <span class="badge bg-primary">200 Sales</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fa fa-heartbeat text-danger me-2"></i>Blood Pressure Monitor</span>
+                            <span class="badge bg-danger">150 Sales</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fa fa-stethoscope text-success me-2"></i>First Aid Kit</span>
+                            <span class="badge bg-success">120 Sales</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Expanded Components Section End -->
+
+{% endblock %}

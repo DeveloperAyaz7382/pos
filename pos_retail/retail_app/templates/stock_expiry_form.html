@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Add /Edit Stock Expiry</h1>
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="item_id" class="form-label">Select Item</label>
+                <select class="form-select" id="item_id" name="item_id" required>
+                    {% for item in items %}
+                        <option value="{{ item.item_id }}" {% if expiry and expiry.item.id == item.id %}selected{% endif %}>{{ item.item_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="manufacture_date" class="form-label">Manufacture Date</label>
+                <input type="date" class="form-control" id="manufacture_date" name="manufacture_date" value="{% if expiry %}{{ expiry.manufacture_date }}{% endif %}" required>
+            </div>
+            <div class="mb-3">
+                <label for="expiry_date" class="form-label">Expiry Date</label>
+                <input type="date" class="form-control" id="expiry_date" name="expiry_date" value="{% if expiry %}{{ expiry.expiry_date }}{% endif %}" required>
+            </div>
+            <div class="mb-3">
+                <label for="quantity_expiry" class="form-label">Quantity Expired</label>
+                <input type="number" class="form-control" id="quantity_expiry" name="quantity_expiry" value="{% if expiry %}{{ expiry.quantity_expiry }}{% endif %}" required>
+            </div>
+            <div class="mb-3">
+                <label for="expiry_status" class="form-label">Expiry Status</label>
+                <select class="form-select" id="expiry_status" name="expiry_status" required>
+                    <option value="1" {% if expiry and expiry.expiry_status == 1 %}selected{% endif %}>Active</option>
+                    <option value="0" {% if expiry and expiry.expiry_status == 0 %}selected{% endif %}>Expired</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    {% endblock %}

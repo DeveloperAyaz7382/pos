@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Stock List</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Item</th>
+                    <th>Salesman</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Value</th>
+                    <th>Entry Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in stocks %}
+                    <tr>
+                        <td>{{ stock.stock_id }}</td>
+                        <td>{{ stock.item.item_name }}</td>
+                        <td>{{ stock.salesman.salesman_name }}</td>
+                        <td>{{ stock.stock_quantity }}</td>
+                        <td>{{ stock.stock_unitprice }}</td>
+                        <td>{{ stock.stock_total_value }}</td>
+                        <td>{{ stock.stock_entry_date }}</td>
+                        <td>
+                            <a href="{% url 'stock_edit' stock.stock_id %}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="{% url 'stock_delete' stock.stock_id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            
+        </table>
+    </div>
+    {% endblock %}
