@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">{{ action }} Item Type</h6>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="mb-6">
+                <label for="type_name" class="block mb-2 text-sm font-medium">Type Name</label>
+                <input
+                    type="text"
+                    id="type_name"
+                    name="type_name"
+                    class="form-input w-full"
+                    value="{{ item_type.type_name }}"
+                    required>
+            </div>
+            <div class="mb-6">
+                <label for="type_description" class="block mb-2 text-sm font-medium">Description</label>
+                <textarea
+                    id="type_description"
+                    name="type_description"
+                    class="form-input w-full"
+                    rows="4"
+                    required>{{ item_type.type_description }}</textarea>
+            </div>
+            <div class="flex justify-end gap-3">
+                <a href="{% url 'itemtypelist' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

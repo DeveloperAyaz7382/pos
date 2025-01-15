@@ -1,4 +1,5 @@
 # In retail_app/models.py, define your models
+from decimal import Decimal
 from django.db import models
 from django.utils.timezone import now
 from django.db.models.signals import post_save
@@ -8,7 +9,7 @@ from django.dispatch import receiver
 
 class Item_Type(models.Model):
     type_id = models.BigAutoField(primary_key=True)  # Auto-incrementing primary key
-    type_name = models.CharField(max_length=100)
+    type_name = models.CharField(max_length=100,unique=True)
     type_description = models.TextField()
 
     def __str__(self):
@@ -18,9 +19,9 @@ class Item_Type(models.Model):
 
 class CompanyInfo(models.Model):
     company_id = models.BigAutoField(primary_key=True)  # Auto-incrementing primary key
-    company_name = models.CharField(max_length=255)  # Company name as a string
-    company_contact = models.CharField(max_length=255)  # Company contact number
-    company_email = models.EmailField(max_length=254)  # Email field for company contact
+    company_name = models.CharField(max_length=255,unique=True)  # Company name as a string
+    company_contact = models.CharField(max_length=255,unique=True)  # Company contact number
+    company_email = models.EmailField(max_length=254,unique=True)  # Email field for company contact
     company_address = models.TextField()  # Address of the company
 
     def __str__(self):
@@ -49,7 +50,9 @@ class Products(models.Model):
     ]
 
     item_id = models.BigAutoField(primary_key=True)
-    item_name = models.CharField(max_length=255)
+    item_name = models.CharField(max_length=255,unique=True)
+    item_formula = models.CharField(max_length=255,unique=True,default='default_formula')
+    item_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     type_id = models.ForeignKey(Item_Type, on_delete=models.CASCADE)  # Link to ItemType
     company_id = models.ForeignKey(CompanyInfo, on_delete=models.CASCADE)  # Link to CompanyInfo
     item_status = models.IntegerField(choices=ITEM_STATUS_CHOICES, default=1)
@@ -94,6 +97,7 @@ class StockTracking(models.Model):
 class StockExpiry(models.Model):
     expiry_id = models.BigAutoField(primary_key=True)
     item = models.ForeignKey(Products, on_delete=models.CASCADE)  # ForeignKey reference to InventoryItem
+    batch_no = models.CharField(max_length=255,unique=True, default='Batch No')
     manufacture_date = models.DateField()
     expiry_date = models.DateField()
     quantity_expiry = models.BigIntegerField()
@@ -118,55 +122,49 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.order_id} - {self.order_customer_name}"
     
-    
 class OrderItem(models.Model):
-    order_item_id = models.BigAutoField(primary_key=True)  # Auto-incrementing primary key
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    item = models.ForeignKey(Products, on_delete=models.CASCADE)
-    order_item_quantity = models.PositiveIntegerField()
-    order_item_unitprice = models.DecimalField(max_digits=10, decimal_places=2)
-    
-    
+    order_item_id = models.BigAutoField(primary_key=True)
+    order = models.ForeignKey('Order', on_delete=models.CASCADE)
+    item = models.ForeignKey('Products', on_delete=models.CASCADE)
+    order_item_quantity = models.PositiveIntegerField(verbose_name="Quantity")
+    order_item_unitprice = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    order_item_discount = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'), verbose_name="Discount (%)")
+    order_item_total = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    order_item_subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+
+    def save(self, *args, **kwargs):
+        # Ensure unit price is set correctly
+        if self.order_item_unitprice is None:
+            self.order_item_unitprice = self.item.item_price
+
+        # Convert quantities and prices to Decimal type before calculation
+        self.order_item_total = Decimal(self.order_item_quantity) * Decimal(self.order_item_unitprice)
+
+        # Calculate discount and subtotal
+        discount_amount = (self.order_item_total * Decimal(self.order_item_discount)) / Decimal('100')
+        self.order_item_subtotal = self.order_item_total - discount_amount
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"OrderItem {self.order_item_id} for Order {self.order_id}"
+
+
+class OrderReturn(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)  # Connect to Order via ForeignKey
+    return_reason = models.TextField()  # Reason for the return
+    return_date = models.DateField()
     
-    
-    
-class Wastage(models.Model):
-    DAMAGE = 'Damage'
-    SPOILAGE = 'Spoilage'
-    EXPIRATION = 'Expiration'
-    OTHER = 'Other'
-
-    WASTAGE_REASONS = [
-        (DAMAGE, 'Damage'),
-        (SPOILAGE, 'Spoilage'),
-        (EXPIRATION, 'Expiration'),
-        (OTHER, 'Other'),
-    ]
-
-    PENDING = 'Pending'
-    APPROVED = 'Approved'
-    RETURNED = 'Returned'
-
-    RETURN_STATUS = [
-        (PENDING, 'Pending'),
-        (APPROVED, 'Approved'),
-        (RETURNED, 'Returned'),
-    ]
-
-    # Set `wastage_id` as the primary key
-    wastage_id = models.BigAutoField(primary_key=True)  # Auto-incrementing primary key
-    item = models.ForeignKey(Products, on_delete=models.CASCADE)
-    quantity_ordered = models.PositiveIntegerField()  # Number of items ordered
-    quantity_received = models.PositiveIntegerField()  # Actual quantity received
-    quantity_wasted = models.PositiveIntegerField()  # Quantity of items wasted
-    reason_for_wastage = models.CharField(max_length=50, choices=WASTAGE_REASONS)  # Reason for wastage
-    date_of_wastage = models.DateTimeField(auto_now_add=True)  # Date when wastage was identified
-    return_status = models.CharField(max_length=50, choices=RETURN_STATUS, default=PENDING)  # Return status
-    remarks = models.TextField(blank=True, null=True)  # Additional remarks
-
     def __str__(self):
-        return f'{self.quantity_wasted} units of {self.item.item_name} wasted (ID: {self.wastage_id})'
+        return f"Return for Order {self.order.order_id}"
 
+
+# class CompanyReturn(models.Model):
+#     company = models.ForeignKey(CompanyInfo, on_delete=models.CASCADE)  # Connect to Company via ForeignKey
+#     return_reason = models.TextField()  # Reason for the return
+#     return_date = models.DateField()
+    
+
+#     def __str__(self):
+#         return f"Return from {self.company.company_name}"
 

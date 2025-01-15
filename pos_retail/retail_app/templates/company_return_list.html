@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+
+
+
+<!-- company_return_list.html -->
+<h1>Company Returns</h1>
+<table>
+    <tr>
+        <th>Company Name</th>
+        <th>Return Reason</th>
+        <th>Return Date</th>
+        <th>Reason for Return</th>
+        <th>Actions</th>
+    </tr>
+    {% for company_return in company_returns %}
+    <tr>
+        <td>{{ company_return.company_name }}</td>
+        <td>{{ company_return.return_reason }}</td>
+        <td>{{ company_return.return_date }}</td>
+        <td>{{ company_return.reason }}</td>
+        <td>
+            <a href="{% url 'update_company_return' company_return.pk %}">Edit</a>
+            <a href="{% url 'delete_company_return' company_return.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'add_company_return' %}">Add New Company Return</a>
+
+{% endblock %}

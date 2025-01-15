@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+
+
+
+<!-- company_return_form.html -->
+<h1>{% if company_return %}Update{% else %}Add{% endif %} Company Return</h1>
+<form method="POST">
+    {% csrf_token %}
+    <label for="company_name">Company Name:</label>
+    <input type="text" name="company_name" value="{% if company_return %}{{ company_return.company_name }}{% endif %}" required>
+
+    <label for="return_reason">Return Reason:</label>
+    <textarea name="return_reason" required>{% if company_return %}{{ company_return.return_reason }}{% endif %}</textarea>
+
+    <label for="return_date">Return Date:</label>
+    <input type="date" name="return_date" value="{% if company_return %}{{ company_return.return_date }}{% endif %}" required>
+
+    <label for="reason">Reason for Return:</label>
+    <input type="text" name="reason" value="{% if company_return %}{{ company_return.reason }}{% endif %}" required>
+
+    <button type="submit">{% if company_return %}Update{% else %}Add{% endif %} Return</button>
+</form>
+
+
+
+{% endblock %}

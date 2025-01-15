@@ -12,6 +12,8 @@
     <!-- Favicon -->
     <link href="{% static 'img/favicon.ico' %}" rel="icon">
 
+    <link rel="stylesheet" href="{% static 'css/starcode2.css' %}">
+
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,14 +81,14 @@
                 
                 <div class="dropdown-menu border-0 shadow-sm">
                     
-                    <a href="{% url 'item_type_list' %}" class="dropdown-item">
-                        <i class="fa fa-tags me-2"></i>Item Types
+                    <a href="{% url 'itemtypelist' %}" class="dropdown-item">
+                        <i class="fa fa-tags me-2"></i> Add Item Types
                     </a>
                     <a href="{% url 'companyinfo_list' %}"  class="dropdown-item">
-                        <i class="fa fa-building me-2"></i>Item Company
+                        <i class="fa fa-building me-2"></i>Add Company
                     </a>
                     <a href="{% url 'inventory_list' %}" class="dropdown-item">
-                        <i class="fa fa-box me-2"></i>Inventory Items
+                        <i class="fa fa-box me-2"></i>Add Inventory Items
                     </a>
                     
                     
@@ -129,17 +131,22 @@
 
             <!-- Returns -->
             <div class="nav-item dropdown">
-                <a href="{% url 'wastage_report' %}" class="nav-link dropdown-toggle py-2" data-bs-toggle="dropdown">
+                <a href="#" class="nav-link dropdown-toggle py-2" data-bs-toggle="dropdown">
                     <i class="fa fa-undo me-2"></i>Returns
                 </a>
                 <div class="dropdown-menu border-0 shadow-sm">
+                    <a href="{% url 'add_order_return' %}" class="dropdown-item">
+                        <i class="fa fa-plus-circle me-2"></i>Add Order Return
+                    </a>
+                    <a href="{% url 'order_return_list' %}" class="dropdown-item">
+                        <i class="fa fa-list me-2"></i>Order Return List
+                    </a>
+
                     <a href="" class="dropdown-item">
-                        <i class="fa fa-plus-circle me-2"></i>Add Wastage Return
+                        <i class="fa fa-plus-circle me-2"></i>Add Company Return
                     </a>
-                    <a href="wastage-return-list.html" class="dropdown-item">
-                        <i class="fa fa-list me-2"></i>Wastage Return List
-                    </a>
-                    <a href="company-return-list.html" class="dropdown-item">
+
+                    <a href="" class="dropdown-item">
                         <i class="fa fa-industry me-2"></i>Company Return List
                     </a>
                 </div>
@@ -216,9 +223,7 @@
                 <a href="#" class="sidebar-toggler flex-shrink-0">
                     <i class="fa fa-bars"></i>
                 </a>
-                {% comment %} <form class="d-none d-md-flex ms-4">
-                    <input class="form-control border-0" type="search" placeholder="Search Medicines, Products...">
-                </form> {% endcomment %}
+               
                 <div class="navbar-nav align-items-center ms-auto">
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
@@ -291,6 +296,17 @@
     <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
     <script src="{% static 'lib/tempusdominus/js/moment.min.js' %}"></script>
     <script src="{% static 'lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+    <script src="{% static 'js/datatables/jquery-3.7.0.js' %}"></script>
+    <script src="{% static 'js/datatables/data-tables.min.js' %}"></script>
+    <script src="{% static 'js/datatables/data-tables.tailwindcss.min.js' %}"></script>
+<!--buttons dataTables-->
+    <script src="{% static 'js/datatables/datatables.buttons.min.js' %}"></script>
+    <script src="{% static 'js/datatables/jszip.min.js' %}"></script>
+    <script src="{% static 'js/datatables/pdfmake.min.js' %}"></script>
+    <script src="{% static 'js/datatables/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'js/datatables/buttons.print.min.js' %}"></script>
+
+     <script src="{% static 'js/datatables/datatables.init.js' %}"></script>
 
     <!-- Template Javascript -->
     <script src="{% static 'js/main.js' %}"></script>

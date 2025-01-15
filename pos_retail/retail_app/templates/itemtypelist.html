@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Add Type</h6>
+        <form action="{% url 'item_type_create' %}" method="POST">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <!-- Type Name Field -->
+                <div class="mb-12">
+                    <label for="type_name" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Type Name <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="type_name" 
+                        name="type_name" 
+                        class="form-input w-full border-gray-300 dark:border-gray-700 focus:ring-custom-500 focus:border-custom-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" 
+                        value="{{ item_type.type_name|default_if_none:'' }}" 
+                        placeholder="Enter Type Name" 
+                        required>
+                </div>
+
+                <!-- Description Field -->
+                <div class="mb-12">
+                    <label for="type_description" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Description <span class="text-red-500">*</span>
+                    </label>
+                    <input  
+                        id="type_description" 
+                        name="type_description" 
+                        class="form-input w-full border-gray-300 dark:border-gray-700 focus:ring-custom-500 focus:border-custom-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" 
+                        value="{{ item_type.type_description|default_if_none:'' }}"
+                        rows="4" 
+                        placeholder="Enter Description" 
+                        required>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end gap-3">
+                <!-- Cancel Button -->
+                <button 
+                    type="button" 
+                    class="px-4 py-2 text-sm font-medium text-red-500 transition-all bg-white border border-red-500 rounded-md hover:bg-red-500 hover:text-white dark:bg-gray-800 dark:border-red-500 dark:hover:bg-red-500/10 focus:ring focus:ring-red-200">
+                    <i data-lucide="x" class="inline-block mr-1"></i>Cancel
+                </button>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="px-4 py-2 text-sm font-medium text-white transition-all bg-custom-500 border border-custom-500 rounded-md hover:bg-custom-600 hover:border-custom-600 focus:ring focus:ring-custom-200">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Content Start -->
+
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-4 text-15">Type List</h6>
+        
+        <table id="example" class="bordered group display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type Name</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in item_types %}
+                <tr>
+                    <td>{{ item.type_id }}</td>
+                    <td>{{ item.type_name }}</td>
+                    <td>{{ item.type_description }}</td>
+                    <td>
+                        <!-- Edit Button -->
+                        <a href="{% url 'edit_itemtype' item.type_id %}" class="text-dark" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        
+                        <!-- Delete Button with SweetAlert -->
+                        <a href="javascript:void(0);" class="text-red-500 hover:text-red-700" 
+                           onclick="delete_itemtype({{ item.type_id }})" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div><!--end card-->
+
+<!-- SweetAlert2 Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function delete_itemtype(type_id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to delete this item type. This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/item_type/delete/${type_id}/`;
+
+                // Add CSRF token dynamically
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = 'csrfmiddlewaretoken';
+                csrfToken.value = '{{ csrf_token }}';
+                form.appendChild(csrfToken);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+
+
+<!-- order_return_list.html -->
+<h1>Order Returns</h1>
+<table>
+    <tr>
+        <th>Order ID</th>
+        <th>Return Reason</th>
+        <th>Return Date</th>
+        <th>Reason for Return</th>
+        <th>Actions</th>
+    </tr>
+    {% for order_return in order_returns %}
+    <tr>
+        <td>{{ order_return.order.order_id }}</td>
+        <td>{{ order_return.return_reason }}</td>
+        <td>{{ order_return.return_date }}</td>
+        <td>{{ order_return.reason }}</td>
+        <td>
+            <a href="{% url 'update_order_return' order_return.pk %}">Edit</a>
+            <a href="{% url 'delete_order_return' order_return.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'add_order_return' %}">Add New Order Return</a>
+{% endblock %}

@@ -1,7 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Item List</title>
@@ -19,16 +19,22 @@
                     <th>Item</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
+                    <th>Total Price</th>
+                    <th>Discount (%)</th>
+                    <th>Subtotal</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for order_item in order_items %}
                     <tr>
-                        <td>{{ order_item.order.order_customer_name }}</td> <!-- Ensure this field exists -->
-                        <td>{{ order_item.item.item_name }}</td>            <!-- Ensure this field exists -->
+                        <td>{{ order_item.order.order_customer_name }}</td>
+                        <td>{{ order_item.item.item_name }}</td>
                         <td>{{ order_item.order_item_quantity }}</td>
-                        <td>{{ order_item.order_item_unitprice }}</td>
+                        <td>{{ order_item.order_item_unitprice|floatformat:2 }}</td>
+                        <td>{{ order_item.order_item_total|floatformat:2 }}</td>
+                        <td>{{ order_item.order_item_discount|floatformat:2 }}</td> <!-- Display discount with two decimals -->
+                        <td>{{ order_item.order_item_subtotal|floatformat:2 }}</td>
                         <td>
                             <a href="{% url 'order_item_edit' order_item.order_item_id %}" class="btn btn-warning btn-sm">Edit</a>
                             <a href="{% url 'order_item_delete' order_item.order_item_id %}" class="btn btn-danger btn-sm">Delete</a>
@@ -36,7 +42,7 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center">No order items found.</td>
+                        <td colspan="8" class="text-center">No order items found.</td> <!-- Adjusted colspan to 8 -->
                     </tr>
                 {% endfor %}
             </tbody>

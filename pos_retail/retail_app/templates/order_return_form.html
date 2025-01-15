@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line to load static files -->
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+
+
+<!-- order_return_form.html -->
+<h1>{% if order_return %}Update{% else %}Add{% endif %} Order Return</h1>
+<form method="POST">
+    {% csrf_token %}
+    <label for="order_id">Order ID:</label>
+    <input type="text" name="order_id" value="{% if order_return %}{{ order_return.order.order_id }}{% endif %}" required>
+
+    <label for="return_reason">Return Reason:</label>
+    <textarea name="return_reason" required>{% if order_return %}{{ order_return.return_reason }}{% endif %}</textarea>
+
+    <label for="return_date">Return Date:</label>
+    <input type="date" name="return_date" value="{% if order_return %}{{ order_return.return_date }}{% endif %}" required>
+
+    <label for="reason">Reason for Return:</label>
+    <input type="text" name="reason" value="{% if order_return %}{{ order_return.reason }}{% endif %}" required>
+
+    <button type="submit">{% if order_return %}Update{% else %}Add{% endif %} Return</button>
+</form>
+
+{% endblock %}

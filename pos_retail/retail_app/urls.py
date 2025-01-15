@@ -6,10 +6,10 @@ urlpatterns = [
 
     path('', views.home, name='home'),
     
-    path('item-types/', views.item_type_list, name='item_type_list'),
+    path('item_types/', views.itemtypelist, name='itemtypelist'),
     path('item-types/create/', views.item_type_create, name='item_type_create'),
-    path('item-types/update/<int:pk>/', views.item_type_update, name='item_type_update'),
-    path('item-types/delete/<int:pk>/', views.item_type_delete, name='item_type_delete'),
+    path('item-types/edit/<int:pk>/', views.edit_itemtype, name='edit_itemtype'),
+    path('item_type/delete/<int:pk>/', views.delete_itemtype, name='delete_itemtype'),
    
     path('companyinfo/', views.companyinfo_list, name='companyinfo_list'),
     path('companyinfo/create/', views.companyinfo_create, name='companyinfo_create'),
@@ -55,9 +55,15 @@ urlpatterns = [
     path('order-item-form/<int:pk>/', views.order_item_edit, name='order_item_edit'),  # URL for editing an order item
     path('order-item-delete/<int:order_item_id>/', views.order_item_delete, name='order_item_delete'),
 
-    
-    path('wastage-list/', views.wastage_list, name='wastage_list'),
-    path('wastage-report/', views.wastage_report, name='wastage_report'),  # For creating wastage
-    path('wastage-report/<str:wastage_id>/', views.wastage_report, name='edit_wastage'),  # For editing wastage
-    path('delete-wastage/<str:wastage_id>/', views.delete_wastage, name='delete_wastage'),  # For deleting wastage
+   # OrderReturn URLs
+    path('order-returns/', views.order_return_list, name='order_return_list'),
+    path('order-returns/add/', views.add_order_return, name='add_order_return'),
+    path('order-returns/<int:pk>/edit/', views.edit_order_return, name='edit_order_return'),
+    path('order-returns/<int:pk>/delete/', views.delete_order_return, name='delete_order_return'),
+
+    # CompanyReturn URLs
+    # path('company-returns/', views.company_return_list, name='company_return_list'),
+    # path('company-returns/add/', views.add_company_return, name='add_company_return'),
+    # path('company-returns/<int:pk>/edit/', views.edit_company_return, name='edit_company_return'),
+    # path('company-returns/<int:pk>/delete/', views.delete_company_return, name='delete_company_return'),
 ]

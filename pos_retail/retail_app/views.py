@@ -1,54 +1,18 @@
-
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Item_Type ,CompanyInfo,SalesmanInfo,Products , Stock,StockTracking, StockExpiry,Order,OrderItem,Wastage
+from .models import Item_Type ,CompanyInfo,SalesmanInfo,Products , Stock,StockTracking, StockExpiry,Order,OrderItem 
 from .forms import CompanyInfoForm
 from django.contrib import messages
+from .models import OrderReturn
 
 
 def home(request):
     return render(request, 'home.html')
-# List view
-# def item_type_list(request):
-#     item_types = Item_Type.objects.all()
-#     return render(request, 'item_type_list.html', {'item_types': item_types})
-
-# # Create view
-# def item_type_create(request):
-#     if request.method == 'POST':
-#         # type_id = request.POST['type_id']
-#         type_name = request.POST['type_name']
-#         type_description = request.POST['type_description']
-#         Item_Type.objects.create(type_name=type_name, type_description=type_description)
-#         return redirect('item_type_list')
-#     return render(request, 'item_type_form.html')
-
-# # Update view
-# def item_type_update(request, id):
-#     item_type = get_object_or_404(Item_Type, type_id=id)
-#     if request.method == 'POST':
-#         item_type.type_name = request.POST['type_name']
-#         item_type.type_description = request.POST['type_description']
-#         item_type.save()
-#         return redirect('item_type_list')
-#     return render(request, 'item_type_form.html', {'item_type': item_type})
-
-# # Delete view
-# def item_type_delete(request, id):
-#     item_type = get_object_or_404(Item_Type, type_id=id)
-#     if request.method == 'POST':
-#         item_type.delete()
-#         return redirect('item_type_list')
-#     return render(request, 'item_type_confirm_delete.html', {'item_type': item_type})
-
-
-
-
 
 # List all item types
-def item_type_list(request):
+def itemtypelist(request):
     item_types = Item_Type.objects.all()
-    return render(request, 'item_type_list.html', {'item_types': item_types})
+    return render(request, 'itemtypelist.html', {'item_types': item_types})
 
 # Create a new item type
 def item_type_create(request):
@@ -58,31 +22,48 @@ def item_type_create(request):
 
         if type_name:  # Ensure type_name is provided
             Item_Type.objects.create(type_name=type_name, type_description=type_description)
-            return redirect('item_type_list')
+            return redirect('itemtypelist')
         
     return render(request, 'item_type_form.html', {'action': 'Create'})
 
 # Update an item type
-def item_type_update(request, pk):
+def edit_itemtype(request, pk):
+    # Retrieve the item type or return a 404 if not found
     item_type = get_object_or_404(Item_Type, pk=pk)
 
     if request.method == 'POST':
-        item_type.type_name = request.POST.get('type_name', item_type.type_name)
-        item_type.type_description = request.POST.get('type_description', item_type.type_description)
+        # Get data from the request
+        type_name = request.POST.get('type_name')
+        type_description = request.POST.get('type_description')
+
+        # Validate inputs
+        if not type_name or not type_description:
+            messages.error(request, "Type name and description are required.")
+            return render(request, 'edititemtype.html', {'item_type': item_type, 'action': 'Update'})
+
+        # Update the fields and save
+        item_type.type_name = type_name
+        item_type.type_description = type_description
         item_type.save()
-        return redirect('item_type_list')
 
-    return render(request, 'item_type_form.html', {'item_type': item_type, 'action': 'Update'})
+        # Provide success feedback
+        messages.success(request, "Item type updated successfully.")
+        return redirect('itemtypelist')  # Redirect to the item type list page
 
-# Delete an item type
-def item_type_delete(request, pk):
+    # Render the form with the current data for GET request
+    return render(request, 'edit_itemtype.html', {'item_type': item_type, 'action': 'Update'})
+
+def delete_itemtype(request, pk=None):
+    if pk is None:
+        return JsonResponse({'error': 'Invalid ID provided'}, status=400)
+    
     item_type = get_object_or_404(Item_Type, pk=pk)
 
     if request.method == 'POST':
         item_type.delete()
-        return redirect('item_type_list')
+        return redirect('itemtypelist')  # Redirect to the list page after deletion
 
-    return render(request, 'item_type_confirm_delete.html', {'item_type': item_type})
+    return render(request, 'delete_itemtype.html', {'item_type': item_type})
 
 # CREATE: Add a new company
 def companyinfo_create(request):
@@ -153,33 +134,6 @@ def create_salesman(request, company_id):
     return render(request, 'create_salesman.html', {'company': company, 'salesmen': salesmen})
 
 
-# def create_salesman(request, company_id):
-#        # Fetch all salesmen
-#     salesmen = Salesman.objects.all()
-    
-#     # Loop through salesmen to manually fetch their related company
-#     for salesman in salesmen:
-#         salesman.company = CompanyInfo.objects.get(company_id=salesman.company_id)
-#     company = get_object_or_404(CompanyInfo, company_id=company_id)
-
-#     if request.method == 'POST':
-#         salesman_name = request.POST.get('salesman_name')
-#         salesman_contact = request.POST.get('salesman_contact')
-
-#         if salesman_name and salesman_contact:
-#             Salesman.objects.create(
-#                 salesman_name=salesman_name,
-#                 salesman_contact=salesman_contact,
-#                 company_id=company.company_id
-#             )
-#             # messages.success(request, f"{company.company_name}.")
-#             return redirect('salesman_list')  # Replace with the actual list view URL
-
-#         messages.error(request, "All fields are required.")
-
-#     return render(request, 'create_salesman.html', {'company': company , 'salesmen': salesmen})
-
-
 
 def edit_salesman(request, salesman_id):
     salesman = get_object_or_404(SalesmanInfo, salesman_id=salesman_id)
@@ -224,6 +178,8 @@ def inventory_form_view(request, inventory_id=None):
     if request.method == 'POST':
         # Retrieve form data
         item_name = request.POST.get('item_name')
+        item_formula = request.POST.get('item_formula')
+        item_price= float(request.POST.get('item_price'))
         type_id = request.POST.get('type_id')
         company_id = request.POST.get('company_id')
         # item_status = request.POST.get('item_status')
@@ -240,6 +196,8 @@ def inventory_form_view(request, inventory_id=None):
         if inventory:
             # Update existing inventory
             inventory.item_name = item_name
+            inventory.item_formula = item_formula
+            inventory.item_price = item_price
             inventory.type_id_id = type_id
             inventory.company_id_id = company_id
             # inventory.item_status = item_status
@@ -249,6 +207,8 @@ def inventory_form_view(request, inventory_id=None):
             # Create a new inventory
             Products.objects.create(
                 item_name=item_name,
+                item_formula=item_formula,
+                item_price=item_price,
                 type_id_id=type_id,
                 company_id_id=company_id,
                 # item_status=item_status,
@@ -516,12 +476,8 @@ def order_item_list(request):
     order_items = OrderItem.objects.all()
     return render(request, 'order_item_list.html', {'order_items': order_items})
 
-# # Add a new order item or edit an existing one
+
 # def order_item_form(request, pk=None):
-#     """
-#     Handles both adding a new order item and editing an existing one.
-#     If `pk` is provided, it edits the corresponding OrderItem; otherwise, it creates a new one.
-#     """
 #     if pk:
 #         # Edit mode: fetch the existing OrderItem
 #         order_item = get_object_or_404(OrderItem, pk=pk)
@@ -535,10 +491,11 @@ def order_item_list(request):
 #         item_id = request.POST.get('item_id')
 #         order_item_quantity = request.POST.get('order_item_quantity')
 #         order_item_unitprice = request.POST.get('order_item_unitprice')
+#         order_item_discount = request.POST.get('order_item_discount')
 
 #         # Fetch related model instances
 #         order = get_object_or_404(Order, pk=order_id)
-#         item = get_object_or_404(Inventory, pk=item_id)
+#         item = get_object_or_404(Products, pk=item_id)
 
 #         if order_item:
 #             # Update the existing OrderItem
@@ -546,6 +503,7 @@ def order_item_list(request):
 #             order_item.item = item
 #             order_item.order_item_quantity = order_item_quantity
 #             order_item.order_item_unitprice = order_item_unitprice
+#             order_item.order_item_discount= order_item_discount
 #             order_item.save()
 #         else:
 #             # Create a new OrderItem
@@ -553,23 +511,23 @@ def order_item_list(request):
 #                 order=order,
 #                 item=item,
 #                 order_item_quantity=order_item_quantity,
-#                 order_item_unitprice=order_item_unitprice
+#                 order_item_unitprice=order_item_unitprice,
+#                 order_item_discount= order_item_discount
+                
 #             )
 
 #         return redirect('order_item_list')  # Redirect to the order item list view
 
 #     # Fetch orders and items for the form
 #     orders = Order.objects.all()
-#     items = Inventory.objects.all()
+#     items = Products.objects.all()
 
-#     # Render the form template
 #     return render(request, 'order_item_form.html', {
 #         'order_item': order_item,
 #         'orders': orders,
 #         'items': items,
 #     })
-
-
+    
 def order_item_form(request, pk=None):
     if pk:
         # Edit mode: fetch the existing OrderItem
@@ -584,6 +542,7 @@ def order_item_form(request, pk=None):
         item_id = request.POST.get('item_id')
         order_item_quantity = request.POST.get('order_item_quantity')
         order_item_unitprice = request.POST.get('order_item_unitprice')
+        order_item_discount = request.POST.get('order_item_discount')
 
         # Fetch related model instances
         order = get_object_or_404(Order, pk=order_id)
@@ -595,6 +554,7 @@ def order_item_form(request, pk=None):
             order_item.item = item
             order_item.order_item_quantity = order_item_quantity
             order_item.order_item_unitprice = order_item_unitprice
+            order_item.order_item_discount = order_item_discount
             order_item.save()
         else:
             # Create a new OrderItem
@@ -602,7 +562,8 @@ def order_item_form(request, pk=None):
                 order=order,
                 item=item,
                 order_item_quantity=order_item_quantity,
-                order_item_unitprice=order_item_unitprice
+                order_item_unitprice=order_item_unitprice,
+                order_item_discount=order_item_discount
             )
 
         return redirect('order_item_list')  # Redirect to the order item list view
@@ -616,7 +577,6 @@ def order_item_form(request, pk=None):
         'orders': orders,
         'items': items,
     })
-    
     
 # Edit an existing order item
 def order_item_edit(request, pk):
@@ -644,114 +604,74 @@ def order_item_delete(request, order_item_id):
 
     return render(request, 'order_item_delete_confirm.html', {'order_item': order_item})
 
-def wastage_list(request):
-    # Retrieve all wastage records from the database
-    wastages = Wastage.objects.all()
-    
-    # Render the template and pass the wastages to the context
-    return render(request, 'wastage_list.html', {'wastages': wastages})
+
+# OrderReturn Views
+def order_return_list(request):
+    order_returns = OrderReturn.objects.all()
+    return render(request, 'order_return_list.html', {'order_returns': order_returns})
 
 
-# def wastage_report(request, wastage_id):
-#     # Retrieve the wastage object based on the wastage_id
-#     wastage = get_object_or_404(Wastage, wastage_id=wastage_id)
-    
+def add_order_return(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order')
+        return_reason = request.POST.get('return_reason')
+        return_date = request.POST.get('return_date')
+        order = get_object_or_404(Order, id=order_id)
+        OrderReturn.objects.create(order=order, return_reason=return_reason, return_date=return_date)
+        return redirect('order_return_list')
+    orders = Order.objects.all()
+    return render(request, 'add_order_return.html', {'orders': orders})
+
+
+def edit_order_return(request, pk):
+    order_return = get_object_or_404(OrderReturn, pk=pk)
+    if request.method == 'POST':
+        order_return.return_reason = request.POST.get('return_reason')
+        order_return.return_date = request.POST.get('return_date')
+        order_return.save()
+        return redirect('order_return_list')
+    return render(request, 'edit_order_return.html', {'order_return': order_return})
+
+
+def delete_order_return(request, pk):
+    order_return = get_object_or_404(OrderReturn, pk=pk)
+    if request.method == 'POST':
+        order_return.delete()
+        return redirect('order_return_list')
+    return render(request, 'delete_order_return.html', {'order_return': order_return})
+
+
+# # CompanyReturn Views
+# def company_return_list(request):
+#     company_returns = CompanyReturn.objects.all()
+#     return render(request, 'company_return_list.html', {'company_returns': company_returns})
+
+
+# def add_company_return(request):
 #     if request.method == 'POST':
-#         # Retrieve data from POST
-#         item_id = request.POST.get('item_id')  # Ensure you are getting the item_id field
-#         if not item_id:
-#             # If item_id is missing or empty, you can handle the error appropriately
-#             return render(request, 'error.html', {'error_message': 'Item ID is required.'})
-        
-#         # Retrieve other fields as needed
-#         quantity_ordered = request.POST.get('quantity_ordered')
-#         quantity_received = request.POST.get('quantity_received')
-#         quantity_wasted = request.POST.get('quantity_wasted')
-#         reason_for_wastage = request.POST.get('reason_for_wastage')
-#         return_status = request.POST.get('return_status')
-#         remarks = request.POST.get('remarks')
+#         company_id = request.POST.get('company')
+#         return_reason = request.POST.get('return_reason')
+#         return_date = request.POST.get('return_date')
+#         company = get_object_or_404(CompanyInfo, id=company_id)
+#         CompanyReturn.objects.create(company=company, return_reason=return_reason, return_date=return_date)
+#         return redirect('company_return_list')
+#     companies = CompanyInfo.objects.all()
+#     return render(request, 'add_company_return.html', {'companies': companies})
 
-#         # Fetch the Inventory object by item_id
-#         item = Inventory.objects.get(item_id=item_id)
 
-#         # Create or update Wastage record
-#         Wastage.objects.create(
-#             item=item,
-#             quantity_ordered=quantity_ordered,
-#             quantity_received=quantity_received,
-#             quantity_wasted=quantity_wasted,
-#             reason_for_wastage=reason_for_wastage,
-#             return_status=return_status,
-#             remarks=remarks
-#         )
+# def edit_company_return(request, pk):
+#     company_return = get_object_or_404(CompanyReturn, pk=pk)
+#     if request.method == 'POST':
+#         company_return.return_reason = request.POST.get('return_reason')
+#         company_return.return_date = request.POST.get('return_date')
+#         company_return.save()
+#         return redirect('company_return_list')
+#     return render(request, 'edit_company_return.html', {'company_return': company_return})
 
-#         return redirect('wastage_list')  # Redirect after saving
-#     else:
-#         # GET request: pass context data, like the available items
-#         items = Inventory.objects.all()
-#         return render(request, 'wastage_report.html', {'items': items} , {'wastage': wastage})
-def wastage_report(request, wastage_id=None):
-    if request.method == 'POST':
-        # Handling POST request to create or update a wastage record
-        item_id = request.POST.get('item_id')
-        quantity_ordered = request.POST.get('quantity_ordered')
-        quantity_received = request.POST.get('quantity_received')
-        quantity_wasted = request.POST.get('quantity_wasted')
-        reason_for_wastage = request.POST.get('reason_for_wastage')
-        return_status = request.POST.get('return_status')
-        remarks = request.POST.get('remarks')
 
-        # Validate the required fields
-        if not all([item_id, quantity_ordered, quantity_received, quantity_wasted, reason_for_wastage, return_status]):
-            return render(request, 'wastage_report.html', {
-                'error': 'All fields are required.',
-                'items': Products.objects.all(),
-            })
-
-        # If we have a `wastage_id`, we are editing an existing record
-        if wastage_id:
-            wastage = get_object_or_404(Wastage, pk=wastage_id)
-            wastage.item_id = item_id
-            wastage.quantity_ordered = quantity_ordered
-            wastage.quantity_received = quantity_received
-            wastage.quantity_wasted = quantity_wasted
-            wastage.reason_for_wastage = reason_for_wastage
-            wastage.return_status = return_status
-            wastage.remarks = remarks
-            wastage.save()
-        else:
-            # If `wastage_id` is None, we are creating a new record
-            Wastage.objects.create(
-                item_id=item_id,
-                quantity_ordered=quantity_ordered,
-                quantity_received=quantity_received,
-                quantity_wasted=quantity_wasted,
-                reason_for_wastage=reason_for_wastage,
-                return_status=return_status,
-                remarks=remarks,
-            )
-
-        return redirect('wastage_list')  # Redirect to the wastage list after saving the data
-
-    # If it's a GET request, render the form with the existing data if `wastage_id` is provided
-    if wastage_id:
-        wastage = get_object_or_404(Wastage, pk=wastage_id)
-        context = {
-            'wastage': wastage,
-            'items': Products.objects.all(),
-        }
-    else:
-        context = {
-            'items': Products.objects.all(),
-        }
-
-    return render(request, 'wastage_report.html', context)
-
-def delete_wastage(request, wastage_id):
-    wastage = get_object_or_404(Wastage, wastage_id=wastage_id)
-
-    if request.method == 'POST':
-        wastage.delete()
-        return redirect('wastage_list')  # Redirect to the success page after deletion
-
-    return render(request, 'delete_wastage.html', {'wastage': wastage})
+# def delete_company_return(request, pk):
+#     company_return = get_object_or_404(CompanyReturn, pk=pk)
+#     if request.method == 'POST':
+#         company_return.delete()
+#         return redirect('company_return_list')
+#     return render(request, 'delete_company_return.html', {'company_return': company_return})

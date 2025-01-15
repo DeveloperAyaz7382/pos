@@ -21,6 +21,12 @@ Home Page
             </div>
 
             <div class="mb-3">
+                <label for="item_formula" class="form-label">Formula Tablets</label>
+                <input type="text" class="form-control" id="item_formula" name="item_formula"
+                    value="{% if inventory %}{{ inventory.item_formula }}{% endif %}" required>
+            </div>
+
+            <div class="mb-3">
                 <label for="type_id" class="form-label">Item Type</label>
                 <select class="form-select" id="type_id" name="type_id" required>
                     <option value="" disabled {% if not inventory %}selected{% endif %}>Select Type</option>
@@ -44,6 +50,11 @@ Home Page
                 </select>
             </div>
             
+            <div class="mb-3">
+                <label for="item_price" class="form-label">Unit Price</label>
+                <input type="number" class="form-control" id="item_price" name="item_price"
+                    value="{% if inventory %}{{ inventory.item_price }}{% endif %}" required>
+            </div>
             {% comment %} <div class="mb-3">
                 <label for="item_status" class="form-label">Status</label>
                 <select class="form-select" id="item_status" name="item_status" required>
@@ -65,8 +76,10 @@ Home Page
                         <tr>
                             <th>Item ID</th>
                             <th>Item Name</th>
+                            <th>Formula Tablets</th>
                             <th>Type</th>
                             <th>Company</th>
+                            <th>Unit Price</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -76,8 +89,10 @@ Home Page
                         <tr>
                             <td>{{ item.item_id }}</td>
                             <td>{{ item.item_name }}</td>
+                            <td>{{ item.item_formula }}</td>
                             <td>{{ item.type_id }}</td>
                             <td>{{ item.company_id }}</td>
+                            <td>{{ item.item_price }}</td>
                             <td>{{ item.get_item_status_display }}</td>
                             <td>
                                 <a href="{% url 'edit_inventory' item.item_id %}" class="btn btn-warning btn-sm">
