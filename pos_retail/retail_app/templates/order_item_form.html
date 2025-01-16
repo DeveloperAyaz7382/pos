@@ -35,42 +35,47 @@ Home Page
                     </div>
                 </div>
             </div><!--end grid-->
-{% comment %}     
+    
             <div class="card">
                 <div class="card-body">
                     <form action="#!">
                         <h6 class="mb-4 text-gray-800 underline text-16 dark:text-zink-50">Generale Info:</h6>
                         <div class="grid grid-cols-1 gap-5 xl:grid-cols-12">
-                            <div class="xl:col-span-3">
+                            {% comment %} <div class="xl:col-span-3">
                                 <label for="invoiceID" class="inline-block mb-2 text-base font-medium">Invoice No.</label>
                                 <input type="text" id="invoiceID" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter invoice no." value="#TW15090251" disabled="" required="">
+                            </div><!--end col--> {% endcomment %}
+
+                            <div class="xl:col-span-3">
+                                <label for="order_customer_name" class="inline-block mb-2 text-base font-medium">Customer Name</label>
+                                <input type="text" name="order_customer_name" class="form-control" id="order_customer_name" 
+                                        value="{% if order_item %}{{ order_item.order_customer_name }}{% else %}{% endif %}" required>
                             </div><!--end col-->
 
                             <div class="xl:col-span-3">
-                                <label for="invoiceNo" class="inline-block mb-2 text-base font-medium">Customer Name</label>
-                                <input type="text" id="invoiceNo" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Invoice Date" data-provider="flatpickr" data-date-format="d M, Y" readonly="readonly" required="">
-                            </div><!--end col-->
-
-                            <div class="xl:col-span-3">
-                                <label for="invoiceNo" class="inline-block mb-2 text-base font-medium">Invoice Date</label>
-                                <input type="text" id="invoiceNo" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Invoice Date" data-provider="flatpickr" data-date-format="d M, Y" readonly="readonly" required="">
+                                <label for="order_date" class="inline-block mb-2 text-base font-medium">Invoice Date</label>
+                                <input type="date" name="order_date" class="form-control" id="order_date" 
+                                 value="{% if order_item %}{{ order_item.order_date }}{% else %}{% endif %}" required>
                             </div><!--end col-->
                             
                             <div class="xl:col-span-3">
-                                <label for="paymentStatus" class="inline-block mb-2 text-base font-medium">Payment Status</label>
-                                <select class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" data-choices="" data-choices-search-false="" name="paymentStatus" id="paymentStatus">
+                                <label for="order_payment_status" class="inline-block mb-2 text-base font-medium">Payment Status</label>
+                                {% comment %} <select class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" data-choices="" data-choices-search-false="" name="paymentStatus" id="paymentStatus">
                                     <option selected="">Select Status</option>
                                     <option value="Paid">Paid</option>
                                     <option value="Unpaid">Unpaid</option>
                                     <option value="Cancel">Cancel</option>
                                     <option value="Refund">Refund</option>
+                                </select> {% endcomment %}
+                                <select name="order_payment_status" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" required>
+                                    <option value="Paid" {% if order_item and order_item.order_payment_status == 'Paid' %} selected {% endif %}>Paid</option>
+                                    <option value="Unpaid" {% if order_item and order_item.order_payment_status == 'Unpaid' %} selected {% endif %}>Unpaid</option>
                                 </select>
                             </div><!--end col-->
                         </div><!--end grid-->
     
-                     
                         <h6 class="my-5 underline text-16">Products Info:</h6>
-    
+
                         <div class="overflow-x-auto">
                             <table class="w-full whitespace-nowrap">
                                 <thead>
@@ -79,54 +84,76 @@ Home Page
                                         <th class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500">Quantity</th>
                                         <th class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500">Price</th>
                                         <th class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500">Discount</th>
-                                        <th class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500">Description </th>
+                                        <th class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500">Description</th>
                                         <th class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500 w-44">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody class="before:block before:h-3 item-list">
                                     <tr class="item">
                                         <td class="border border-slate-200 dark:border-zink-500">
-                                            <input type="text" id="itemName1" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Item Name" required="">
+                                            <select class="form-select" name="item_id" id="item_id" required>
+                                                {% for item in items %}
+                                                    <option value="{{ item.pk }}" {% if order_item and order_item.item.pk == item.pk %}selected{% endif %}>
+                                                        {{ item.item_name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
                                         </td>
+                        
                                         <td class="w-40 border border-slate-200 dark:border-zink-500">
                                             <div class="flex justify-center text-center input-step">
-                                                <button type="button" class="border size-9 leading-[15px] btn-minus bg-white dark:bg-zink-700 dark:border-zink-500 ltr:rounded-l rtl:rounded-r transition-all duration-200 ease-linear border-slate-200 text-slate-500 dark:text-zink-200 hover:bg-custom-500 dark:hover:bg-custom-500 hover:text-custom-50 dark:hover:text-custom-50 hover:border-custom-500 dark:hover:border-custom-500 focus:bg-custom-500 dark:focus:bg-custom-500 focus:border-custom-500 dark:focus:border-custom-500 focus:text-custom-50 dark:focus:text-custom-50"><i data-lucide="minus" class="inline-block size-4"></i></button>
-                                                <input type="number" class="w-12 text-center ltr:pl-2 rtl:pr-2 h-9 border-y product-quantity dark:bg-zink-700 focus:shadow-none dark:border-zink-500 item-quantity" value="0" min="0" max="100" readonly="">
-                                                <button type="button" class="transition-all duration-200 ease-linear bg-white border dark:bg-zink-700 dark:border-zink-500 ltr:rounded-r rtl:rounded-l size-9 border-slate-200 btn-plus text-slate-500 dark:text-zink-200 hover:bg-custom-500 dark:hover:bg-custom-500 hover:text-custom-50 dark:hover:text-custom-50 hover:border-custom-500 dark:hover:border-custom-500 focus:bg-custom-500 dark:focus:bg-custom-500 focus:border-custom-500 dark:focus:border-custom-500 focus:text-custom-50 dark:focus:text-custom-50"><i data-lucide="plus" class="inline-block size-4"></i></button>
+                                                <button type="button" class="border size-9 leading-[15px] btn-minus bg-white dark:bg-zink-700 dark:border-zink-500 ltr:rounded-l rtl:rounded-r transition-all duration-200 ease-linear border-slate-200 text-slate-500 dark:text-zink-200 hover:bg-custom-500 dark:hover:bg-custom-500 hover:text-custom-50 dark:hover:text-custom-50 hover:border-custom-500 dark:hover:border-custom-500 focus:bg-custom-500 dark:focus:bg-custom-500 focus:border-custom-500 dark:focus:border-custom-500 focus:text-custom-50 dark:focus:text-custom-50">
+                                                    <i data-lucide="minus" class="inline-block size-4"></i>
+                                                </button>
+                                                <input type="number" class="form-control" name="order_item_quantity" id="order_item_quantity" value="{% if order_item %}{{ order_item.order_item_quantity }}{% else %}0{% endif %}" required>
+                                                <button type="button" class="transition-all duration-200 ease-linear bg-white border dark:bg-zink-700 dark:border-zink-500 ltr:rounded-r rtl:rounded-l size-9 border-slate-200 btn-plus text-slate-500 dark:text-zink-200 hover:bg-custom-500 dark:hover:bg-custom-500 hover:text-custom-50 dark:hover:text-custom-50 hover:border-custom-500 dark:hover:border-custom-500 focus:bg-custom-500 dark:focus:bg-custom-500 focus:border-custom-500 dark:focus:border-custom-500 focus:text-custom-50 dark:focus:text-custom-50">
+                                                    <i data-lucide="plus" class="inline-block size-4"></i>
+                                                </button>
                                             </div>
                                         </td>
+                        
                                         <td class="w-40 border border-slate-200 dark:border-zink-500">
-                                            <input type="number" id="itemName1" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 item-price" placeholder="$00.00" required="">
+                                            <input type="number" step="0.01" class="form-control" name="order_item_unitprice" id="order_item_unitprice" value="{% if order_item %}{{ order_item.order_item_unitprice }}{% else %}0.00{% endif %}" required>
                                         </td>
+                        
                                         <td class="w-40 border border-slate-200 dark:border-zink-500">
-                                            <input type="text" id="itemName1" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 item-discount" placeholder="0%" required="">
+                                            <input type="number" step="0.01" class="form-control" name="order_item_discount" id="order_item_discount" value="{% if order_item %}{{ order_item.order_item_discount }}{% else %}0.00{% endif %}" required>
                                         </td>
+                        
                                         <td class="border border-slate-200 dark:border-zink-500">
-                                            <input type="text" id="itemdescription1" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter Description (Optional)" required="">
+                                            <input type="text" name="order_item_description" class="form-control" id="order_item_description" value="{% if order_item %}{{ order_item.order_customer_name }}{% else %}{% endif %}" required>
                                         </td>
+                        
                                         <td class="border border-slate-200 dark:border-zink-500" rowspan="2">
                                             <div class="mb-1">
-                                                <input type="text" id="ItemTotal" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 item-line-price" placeholder="$00.00" readonly="">
+                                                <input type="number" step="0.01" class="form-control" name="order_item_total" id="order_item_total" value="{% if order_item %}{{ order_item.order_item_total }}{% else %}0.00{% endif %}" readonly>
                                             </div>
-                                            <input type="text" id="itemDiscountsInput" class="px-3.5 pb-2.5 pt-0 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 cart-discount" placeholder="-$00.00" readonly="">
+                                            <input type="number" step="0.01" class="form-control" name="order_item_discount" id="order_item_discount" value="{% if order_item %}{{ order_item.order_item_discount }}{% else %}0.00{% endif %}" readonly>
                                         </td>
                                     </tr>
+                        
                                     <tr>
-                                        
                                         <td class="border border-slate-200 px-3.5 py-1.5 text-center dark:border-zink-500">
-                                            <button type="button" class="px-2 py-1.5 text-xs text-red-500 bg-red-100 btn hover:text-white hover:bg-red-600 focus:text-white focus:bg-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:ring active:ring-red-100 dark:bg-red-500/20 dark:text-red-500 dark:hover:bg-red-500 dark:hover:text-white dark:focus:bg-red-500 dark:focus:text-white dark:active:bg-red-500 dark:active:text-white dark:ring-red-400/20 product-removal"><i data-lucide="trash-2" class="inline-block mr-1 align-middle size-3"></i> <span class="align-middle">Delete</span></button>
+                                            <button type="button" class="px-2 py-1.5 text-xs text-red-500 bg-red-100 btn hover:text-white hover:bg-red-600 focus:text-white focus:bg-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:ring active:ring-red-100 dark:bg-red-500/20 dark:text-red-500 dark:hover:bg-red-500 dark:hover:text-white dark:focus:bg-red-500 dark:focus:text-white dark:active:bg-red-500 dark:active:text-white dark:ring-red-400/20 product-removal">
+                                                <i data-lucide="trash-2" class="inline-block mr-1 align-middle size-3"></i> <span class="align-middle">Delete</span>
+                                            </button>
                                         </td>
                                         <td colspan="3" class="border border-slate-200 dark:border-zink-500"></td>
                                     </tr>
                                 </tbody>
-                             
+                        
                                 <tbody class="before:block before:h-4" id="invoiceTable">
                                     <tr>
                                         <td colspan="6">
-                                            <a href="javascript:void(0)" id="addBtn"><button type="button" class="bg-white border-dashed text-custom-500 btn border-custom-500 hover:text-custom-500 hover:bg-custom-50 hover:border-custom-600 focus:text-custom-600 focus:bg-custom-50 focus:border-custom-600 active:text-custom-600 active:bg-custom-50 active:border-custom-600 dark:bg-zink-700 dark:ring-custom-400/20 dark:hover:bg-custom-800/20 dark:focus:bg-custom-800/20 dark:active:bg-custom-800/20"><i data-lucide="plus" class="inline-block mr-1 align-middle size-3"></i> <span class="align-middle">Add Item</span></button></a>
+                                            <a href="javascript:void(0)" id="addBtn">
+                                                <button type="button" class="bg-white border-dashed text-custom-500 btn border-custom-500 hover:text-custom-500 hover:bg-custom-50 hover:border-custom-600 focus:text-custom-600 focus:bg-custom-50 focus:border-custom-600 active:text-custom-600 active:bg-custom-50 active:border-custom-600 dark:bg-zink-700 dark:ring-custom-400/20 dark:hover:bg-custom-800/20 dark:focus:bg-custom-800/20 dark:active:bg-custom-800/20">
+                                                    <i data-lucide="plus" class="inline-block mr-1 align-middle size-3"></i> <span class="align-middle">Add Item</span>
+                                                </button>
+                                            </a>
                                         </td>
                                     </tr>
                                 </tbody>
+                        
                                 <tbody class="before:block before:h-3" id="totalAmount">
                                     <tr>
                                         <td colspan="4"></td>
@@ -134,102 +161,49 @@ Home Page
                                             Sub Total
                                         </td>
                                         <td class="font-medium border-b border-slate-200 dark:border-zink-500">
-                                            <input type="text" id="subTotale" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 cart-subtotal" placeholder="$00.00" readonly="">
+                                            <input type="text" id="subTotale" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 cart-subtotal" placeholder="$00.00" readonly>
                                         </td>
                                     </tr>
-                                
+                        
                                     <tr>
                                         <td colspan="4"></td>
                                         <td class="border-b border-slate-200 px-3.5 py-2.5 text-slate-500 dark:text-zink-200 dark:border-zink-500">
                                             Item Discounts
                                         </td>
                                         <td class="font-medium border-b border-slate-200 dark:border-zink-500 text-slate-500">
-                                            <input type="text" id="itemDiscounts" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 cart-discount" placeholder="-$00.00" readonly="">
+                                            <input type="text" id="itemDiscounts" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 cart-discount" placeholder="-$00.00" readonly>
                                         </td>
                                     </tr>
-                                 
+                        
                                     <tr>
                                         <td colspan="4"></td>
                                         <td class="border-b border-slate-200 px-3.5 py-2.5 text-slate-500 dark:text-zink-200 dark:border-zink-500">
                                             Total Amount
                                         </td>
                                         <td class="font-medium border-b border-slate-200 dark:border-zink-500">
-                                            <input type="text" id="totalAmount" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 cart-total" placeholder="$00.00" readonly="">
+                                            <input type="text" id="totalAmount" class="px-3.5 py-2.5 border-none form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 cart-total" placeholder="$00.00" readonly>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
+                        
     
                         
                         <div class="flex justify-end gap-2 mt-5">
-                            <button type="button" class="text-slate-500 btn bg-slate-200 border-slate-200 hover:text-slate-600 hover:bg-slate-300 hover:border-slate-300 focus:text-slate-600 focus:bg-slate-300 focus:border-slate-300 focus:ring focus:ring-slate-100 active:text-slate-600 active:bg-slate-300 active:border-slate-300 active:ring active:ring-slate-100 dark:bg-zink-600 dark:hover:bg-zink-500 dark:border-zink-600 dark:hover:border-zink-500 dark:text-zink-200 dark:ring-zink-400/50"><i data-lucide="refresh-ccw" class="inline-block mr-1 size-4"></i> <span class="align-middle">Reset</span></button>
-                            <button type="button" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"><i data-lucide="save" class="inline-block mr-1 size-4"></i> <span class="align-middle">Save</span></button>
-                            <button type="button" class="text-white bg-green-500 border-green-500 btn hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/10"><i data-lucide="download" class="inline-block mr-1 size-4"></i> <span class="align-middle">Download</span></button>
+                            <button id="resetBtn" type="button" class="text-slate-500 btn bg-slate-200 border-slate-200 hover:text-slate-600 hover:bg-slate-300 hover:border-slate-300 focus:text-slate-600 focus:bg-slate-300 focus:border-slate-300 focus:ring focus:ring-slate-100 active:text-slate-600 active:bg-slate-300 active:border-slate-300 active:ring active:ring-slate-100 dark:bg-zink-600 dark:hover:bg-zink-500 dark:border-zink-600 dark:hover:border-zink-500 dark:text-zink-200 dark:ring-zink-400/50"><i data-lucide="refresh-ccw" class="inline-block mr-1 size-4"></i> <span class="align-middle">Reset</span></button>
+                            <button id="saveBtn" type="button" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"><i data-lucide="save" class="inline-block mr-1 size-4"></i> <span class="align-middle">Save</span></button>
+                            <button id="downloadBtn" type="button" class="text-white bg-green-500 border-green-500 btn hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/10"><i data-lucide="download" class="inline-block mr-1 size-4"></i> <span class="align-middle">Download</span></button>
                         </div>
-                    </form>
-                </div>
-            </div><!--end card-->
-    
+                        
         </div>
         <!-- container-fluid -->
-    </div>  {% endcomment %}
+    </div>  
 
-    <div class="card">
-    <div class="card-body">
-        <form method="POST" action="{% url 'order_item_form' pk=order_item.pk if order_item else '' %}">
-            {% csrf_token %}
-            <h6 class="mb-4 text-gray-800 underline text-16 dark:text-zink-50">General Info:</h6>
-            <div class="grid grid-cols-1 gap-5 xl:grid-cols-12">
-                <div class="xl:col-span-3">
-                    <label for="order_id" class="inline-block mb-2 text-base font-medium">Order</label>
-                    <select name="order_id" id="order_id" class="form-input">
-                        {% for order in orders %}
-                            <option value="{{ order.id }}" {% if order_item and order_item.order == order %} selected {% endif %}>
-                                {{ order.id }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div class="xl:col-span-3">
-                    <label for="item_id" class="inline-block mb-2 text-base font-medium">Product</label>
-                    <select name="item_id" id="item_id" class="form-input">
-                        {% for item in items %}
-                            <option value="{{ item.id }}" {% if order_item and order_item.item == item %} selected {% endif %}>
-                                {{ item.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="xl:col-span-3">
-                    <label for="order_item_quantity" class="inline-block mb-2 text-base font-medium">Quantity</label>
-                    <input type="number" name="order_item_quantity" id="order_item_quantity" class="form-input" value="{% if order_item %}{{ order_item.order_item_quantity }}" required>
-                </div>
-
-                <div class="xl:col-span-3">
-                    <label for="order_item_unitprice" class="inline-block mb-2 text-base font-medium">Unit Price</label>
-                    <input type="number" name="order_item_unitprice" id="order_item_unitprice" class="form-input" value="{{ order_item.order_item_unitprice if order_item else '' }}" required>
-                </div>
-
-                <div class="xl:col-span-3">
-                    <label for="order_item_discount" class="inline-block mb-2 text-base font-medium">Discount</label>
-                    <input type="number" name="order_item_discount" id="order_item_discount" class="form-input" value="{{ order_item.order_item_discount if order_item else '' }}" required>
-                </div>
-            </div><!--end grid-->
-    
-            <div class="flex justify-end gap-2 mt-5">
-                <button type="reset" class="btn text-slate-500 bg-slate-200">Reset</button>
-                <button type="submit" class="btn text-white bg-custom-500">Save</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-    {% endblock %}
     <!-- End Page-content -->
+
     
+    {% endblock %}
 {% comment %}     
    
 

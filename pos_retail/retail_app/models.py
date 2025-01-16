@@ -7,6 +7,7 @@ from django.dispatch import receiver
 
 
 
+
 class Item_Type(models.Model):
     type_id = models.BigAutoField(primary_key=True)  # Auto-incrementing primary key
     type_name = models.CharField(max_length=100,unique=True)
@@ -122,32 +123,36 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.order_id} - {self.order_customer_name}"
     
+
+
 class OrderItem(models.Model):
     order_item_id = models.BigAutoField(primary_key=True)
-    order = models.ForeignKey('Order', on_delete=models.CASCADE)
-    item = models.ForeignKey('Products', on_delete=models.CASCADE)
+    order_customer_name = models.CharField(max_length=255, null=True, blank=True)  # Allow temporary nulls
+    order_date = models.DateTimeField(default=now)  # Default to the current date and time
+    order_payment_status = models.CharField(max_length=50, null=True, blank=True)
+    item = models.ForeignKey(Products, on_delete=models.CASCADE)  # Reference to the product
     order_item_quantity = models.PositiveIntegerField(verbose_name="Quantity")
+    order_item_description = models.TextField(default="No description available")
     order_item_unitprice = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     order_item_discount = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'), verbose_name="Discount (%)")
     order_item_total = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     order_item_subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
 
     def save(self, *args, **kwargs):
-        # Ensure unit price is set correctly
-        if self.order_item_unitprice is None:
+        # Ensure unit price is set if not provided
+        if not self.order_item_unitprice and self.item:
             self.order_item_unitprice = self.item.item_price
 
-        # Convert quantities and prices to Decimal type before calculation
+        # Calculate total and subtotal
         self.order_item_total = Decimal(self.order_item_quantity) * Decimal(self.order_item_unitprice)
-
-        # Calculate discount and subtotal
         discount_amount = (self.order_item_total * Decimal(self.order_item_discount)) / Decimal('100')
         self.order_item_subtotal = self.order_item_total - discount_amount
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"OrderItem {self.order_item_id} for Order {self.order_id}"
+        return f"OrderItem {self.order_item_id} for Customer {self.order_customer_name}"
+
 
 
 class OrderReturn(models.Model):

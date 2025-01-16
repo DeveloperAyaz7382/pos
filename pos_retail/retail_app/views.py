@@ -477,57 +477,7 @@ def order_item_list(request):
     return render(request, 'order_item_list.html', {'order_items': order_items})
 
 
-# def order_item_form(request, pk=None):
-#     if pk:
-#         # Edit mode: fetch the existing OrderItem
-#         order_item = get_object_or_404(OrderItem, pk=pk)
-#     else:
-#         # Add mode: no OrderItem exists
-#         order_item = None
 
-#     if request.method == 'POST':
-#         # Fetch form data
-#         order_id = request.POST.get('order_id')
-#         item_id = request.POST.get('item_id')
-#         order_item_quantity = request.POST.get('order_item_quantity')
-#         order_item_unitprice = request.POST.get('order_item_unitprice')
-#         order_item_discount = request.POST.get('order_item_discount')
-
-#         # Fetch related model instances
-#         order = get_object_or_404(Order, pk=order_id)
-#         item = get_object_or_404(Products, pk=item_id)
-
-#         if order_item:
-#             # Update the existing OrderItem
-#             order_item.order = order
-#             order_item.item = item
-#             order_item.order_item_quantity = order_item_quantity
-#             order_item.order_item_unitprice = order_item_unitprice
-#             order_item.order_item_discount= order_item_discount
-#             order_item.save()
-#         else:
-#             # Create a new OrderItem
-#             OrderItem.objects.create(
-#                 order=order,
-#                 item=item,
-#                 order_item_quantity=order_item_quantity,
-#                 order_item_unitprice=order_item_unitprice,
-#                 order_item_discount= order_item_discount
-                
-#             )
-
-#         return redirect('order_item_list')  # Redirect to the order item list view
-
-#     # Fetch orders and items for the form
-#     orders = Order.objects.all()
-#     items = Products.objects.all()
-
-#     return render(request, 'order_item_form.html', {
-#         'order_item': order_item,
-#         'orders': orders,
-#         'items': items,
-#     })
-    
 def order_item_form(request, pk=None):
     if pk:
         # Edit mode: fetch the existing OrderItem
@@ -538,45 +488,109 @@ def order_item_form(request, pk=None):
 
     if request.method == 'POST':
         # Fetch form data
-        order_id = request.POST.get('order_id')
+        order_customer_name = request.POST.get('order_customer_name')
+        order_date = request.POST.get('order_date')
+        order_payment_status = request.POST.get('order_payment_status')
         item_id = request.POST.get('item_id')
         order_item_quantity = request.POST.get('order_item_quantity')
         order_item_unitprice = request.POST.get('order_item_unitprice')
         order_item_discount = request.POST.get('order_item_discount')
+        order_item_description = request.POST.get('order_item_description')
 
         # Fetch related model instances
-        order = get_object_or_404(Order, pk=order_id)
         item = get_object_or_404(Products, pk=item_id)
 
         if order_item:
             # Update the existing OrderItem
-            order_item.order = order
+            order_item.order_customer_name = order_customer_name
+            order_item.order_date = order_date
+            order_item.order_payment_status = order_payment_status
             order_item.item = item
             order_item.order_item_quantity = order_item_quantity
             order_item.order_item_unitprice = order_item_unitprice
             order_item.order_item_discount = order_item_discount
+            order_item.order_item_description = order_item_description
             order_item.save()
         else:
             # Create a new OrderItem
             OrderItem.objects.create(
-                order=order,
+                order_customer_name=order_customer_name,
+                order_date=order_date,
+                order_payment_status=order_payment_status,
                 item=item,
                 order_item_quantity=order_item_quantity,
                 order_item_unitprice=order_item_unitprice,
-                order_item_discount=order_item_discount
+                order_item_discount=order_item_discount,
+                order_item_description=order_item_description
             )
 
         return redirect('order_item_list')  # Redirect to the order item list view
 
-    # Fetch orders and items for the form
-    orders = Order.objects.all()
+    # Fetch items for the form
     items = Products.objects.all()
 
     return render(request, 'order_item_form.html', {
         'order_item': order_item,
-        'orders': orders,
         'items': items,
     })
+
+
+def addorder(request, pk=None):
+    if pk:
+        # Edit mode: fetch the existing OrderItem
+        order_item = get_object_or_404(OrderItem, pk=pk)
+    else:
+        # Add mode: no OrderItem exists
+        order_item = None
+
+    if request.method == 'POST':
+        # Fetch form data
+        order_customer_name = request.POST.get('order_customer_name')
+        order_date = request.POST.get('order_date')
+        order_payment_status = request.POST.get('order_payment_status')
+        item_id = request.POST.get('item_id')
+        order_item_quantity = request.POST.get('order_item_quantity')
+        order_item_unitprice = request.POST.get('order_item_unitprice')
+        order_item_discount = request.POST.get('order_item_discount')
+        order_item_description = request.POST.get('order_item_description')
+
+        # Fetch related model instances
+        item = get_object_or_404(Products, pk=item_id)
+
+        if order_item:
+            # Update the existing OrderItem
+            order_item.order_customer_name = order_customer_name
+            order_item.order_date = order_date
+            order_item.order_payment_status = order_payment_status
+            order_item.item = item
+            order_item.order_item_quantity = order_item_quantity
+            order_item.order_item_unitprice = order_item_unitprice
+            order_item.order_item_discount = order_item_discount
+            order_item.order_item_description = order_item_description
+            order_item.save()
+        else:
+            # Create a new OrderItem
+            OrderItem.objects.create(
+                order_customer_name=order_customer_name,
+                order_date=order_date,
+                order_payment_status=order_payment_status,
+                item=item,
+                order_item_quantity=order_item_quantity,
+                order_item_unitprice=order_item_unitprice,
+                order_item_discount=order_item_discount,
+                order_item_description=order_item_description
+            )
+
+        return redirect('order_item_list')  # Redirect to the order item list view
+
+    # Fetch items for the form
+    items = Products.objects.all()
+
+    return render(request, 'addorder.html', {
+        'order_item': order_item,
+        'items': items,
+    })
+
     
 # Edit an existing order item
 def order_item_edit(request, pk):

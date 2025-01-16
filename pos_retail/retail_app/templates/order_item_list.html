@@ -15,10 +15,13 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Order</th>
+                    <th>Order Customer Name</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
                     <th>Item</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
+                    <th>Description</th>
                     <th>Total Price</th>
                     <th>Discount (%)</th>
                     <th>Subtotal</th>
@@ -28,10 +31,13 @@
             <tbody>
                 {% for order_item in order_items %}
                     <tr>
-                        <td>{{ order_item.order.order_customer_name }}</td>
+                        <td>{{ order_item.order_customer_name }}</td>
+                        <td>{{ order_item.order_date }}</td>
+                        <td>{{ order_item.order_payment_status }}</td>
                         <td>{{ order_item.item.item_name }}</td>
                         <td>{{ order_item.order_item_quantity }}</td>
                         <td>{{ order_item.order_item_unitprice|floatformat:2 }}</td>
+                        <td>{{ order_item.order_item_description }}</td>
                         <td>{{ order_item.order_item_total|floatformat:2 }}</td>
                         <td>{{ order_item.order_item_discount|floatformat:2 }}</td> <!-- Display discount with two decimals -->
                         <td>{{ order_item.order_item_subtotal|floatformat:2 }}</td>

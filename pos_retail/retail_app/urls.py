@@ -52,6 +52,7 @@ urlpatterns = [
     
     path('order-item-list/', views.order_item_list, name='order_item_list'),
     path('order-item-form/', views.order_item_form, name='order_item_add'),  # URL for adding an order item
+     path('addorder/', views.addorder, name='addorder'),  # URL for adding an order item
     path('order-item-form/<int:pk>/', views.order_item_edit, name='order_item_edit'),  # URL for editing an order item
     path('order-item-delete/<int:order_item_id>/', views.order_item_delete, name='order_item_delete'),
 
