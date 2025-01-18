@@ -51,11 +51,10 @@ urlpatterns = [
     
     
     path('order-item-list/', views.order_item_list, name='order_item_list'),
-    path('order-item-form/', views.order_item_form, name='order_item_add'),  # URL for adding an order item
-     path('addorder/', views.addorder, name='addorder'),  # URL for adding an order item
-    path('order-item-form/<int:pk>/', views.order_item_edit, name='order_item_edit'),  # URL for editing an order item
-    path('order-item-delete/<int:order_item_id>/', views.order_item_delete, name='order_item_delete'),
-
+    # path('order-item-form/', views.order_item_form, name='order_item_add'),  # URL for adding an order item
+    path('add_order/', views.add_order, name='add_order'),  # URL for adding an order item
+    path('edit_order/<int:pk>/', views.edit_order, name='edit_order'),
+   path('order-item/delete/<int:order_item_id>/', views.delete_order_item, name='delete_order_item'),
    # OrderReturn URLs
     path('order-returns/', views.order_return_list, name='order_return_list'),
     path('order-returns/add/', views.add_order_return, name='add_order_return'),

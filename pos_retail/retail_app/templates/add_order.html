@@ -10,54 +10,52 @@ Home Page
 <div class="card"> 
     <div class="card-body">
         <h6 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Add Order</h6>
-        <form action="{% url 'addorder' %}" method="POST">
+        <form action="{% url 'add_order' %}" method="POST">
             {% csrf_token %}
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
                 <!-- Customer Name Field -->
                 <div class="mb-12">
                     <label for="order_customer_name" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Customer Name <span class="text-red-500">*</span>
+                    Customer Name <span class="text-red-500">*</span>
                     </label>
                     <input 
-                    type="text" 
-                    name="order_customer_name" 
-                    class="form-control" 
-                    id="order_customer_name" 
-                    placeholder="Enter Customer Name" 
-                    value="{% if order_item %}{{ order_item.order_customer_name }}{% else %}{% endif %}" 
-                    required>
+                        type="text" 
+                        name="order_customer_name" 
+                        class="form-control" 
+                        id="order_customer_name" 
+                        placeholder="Enter Customer Name" 
+                        value="{% if order_item %}{{ order_item.order_customer_name }}{% endif %}" 
+                        required>
                 </div>
 
                 <!-- Order Date -->
                 <div class="mb-12">
-                    <label for="type_description" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label for="order_date" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                        Order Date <span class="text-red-500">*</span>
                     </label>
                     <input 
-                    type="date" 
-                    name="order_date" 
-                    class="form-control" 
-                    id="order_date" 
-                    value="{% if order_item %}{{ order_item.order_date }}{% else %}{% endif %}" 
-                    required>
+                        type="date" 
+                        name="order_date" 
+                        class="form-control" 
+                        id="order_date" 
+                        value="{% if order_item %}{{ order_item.order_date }}{% endif %}" 
+                        required>
                 </div>
-            </div>
+        
 
-                 <!-- Quantity Field -->
-                 <div class="mb-12">
-                    <label for="item_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                        item Name <span class="text-red-500">*</span>
-                    </label>
-                    <select class="form-select" name="item_id" id="item_id" required>
-                        {% for item in items %}
-                            <option value="{{ item.pk }}" {% if order_item and order_item.item.pk == item.pk %}selected{% endif %}>
-                                {{ item.item_name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
+             <!-- Item Field -->
+             <div class="mb-12">
+                <label for="item_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Item <span class="text-red-500">*</span>
+                </label>
+                <select class="form-select" name="item_id" id="item_id" required>
+                    {% for item in items %}
+                    <option value="{{ item.pk }}" {% if order_item and order_item.item.pk == item.pk %}selected{% endif %}>
+                        {{ item.item_name }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
-
                  <!-- Quantity Field -->
                  <div class="mb-12">
                     <label for="order_item_quantity" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -71,7 +69,7 @@ Home Page
                     value="{% if order_item %}{{ order_item.order_item_quantity }}{% else %}0{% endif %}" 
                     required>
                 </div>
-            </div>
+           
 
                 <!-- Unit Price Field -->
                 <div class="mb-12">
@@ -87,7 +85,7 @@ Home Page
                     value="{% if order_item %}{{ order_item.order_item_unitprice }}{% else %}0.00{% endif %}" 
                     required>
                 </div>
-            </div>
+           
 
 
                    <!-- Discount Field -->
@@ -104,8 +102,7 @@ Home Page
                     value="{% if order_item %}{{ order_item.order_item_discount }}{% else %}0.00{% endif %}" 
                     required>
                 </div>
-            </div>
-
+          
 
           <!-- Description Field -->
           <div class="mb-12">
@@ -117,10 +114,10 @@ Home Page
                     class="form-control" 
                     name="order_item_description" 
                     id="order_item_description" 
-                    value="{% if order_item %}{{ order_item.order_item_description }}{% else %}0.00{% endif %}" 
+                    value="{% if order_item %}{{ order_item.order_item_description }}{% else %}{% endif %}" 
                     required>
                 </div>
-            </div>
+          
 
                     <!-- Payment Status Field -->
           <div class="mb-12">
@@ -159,49 +156,80 @@ Home Page
 
 <div class="card">
     <div class="card-body">
-        <h6 class="mb-4 text-15">Order Detala</h6>
+        <h6 class="mb-5 text-30">Order Details</h6>
         
         <table id="example" class="bordered group display" style="width:100%">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Type Name</th>
+                    <th>CustomerName</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
                     <th>Description</th>
-                    <th>Action</th>
+                    <th>Total Price</th>
+                    <th>Discount (%)</th>
+                    <th>Subtotal</th>
+                    <th>Actions</th>
                 </tr>
-            </thead>
+            </thead> 
             <tbody>
-                {% for item in item_types %}
-                <tr>
-                    <td>{{ item.type_id }}</td>
-                    <td>{{ item.type_name }}</td>
-                    <td>{{ item.type_description }}</td>
-                    <td>
-                        <!-- Edit Button -->
-                        <a href="{% url 'edit_itemtype' item.type_id %}" class="text-dark" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        
-                        <!-- Delete Button with SweetAlert -->
-                        <a href="javascript:void(0);" class="text-red-500 hover:text-red-700" 
-                           onclick="delete_itemtype({{ item.type_id }})" title="Delete">
+
+                {% for order_item in order_items %}
+                    <tr>
+                        <td>{{ order_item.order_customer_name }}</td>
+                        <td>{{ order_item.order_date }}</td>
+                        <td>{{ order_item.order_payment_status }}</td>
+                        <td>{{ order_item.item.item_name }}</td>
+                        <td>{{ order_item.order_item_quantity }}</td>
+                        <td>{{ order_item.order_item_unitprice|floatformat:2 }}</td>
+                        <td>{{ order_item.order_item_description }}</td>
+                        <td>{{ order_item.order_item_total|floatformat:2 }}</td>
+                        <td>{{ order_item.order_item_discount|floatformat:2 }}</td> <!-- Display discount with two decimals -->
+                        <td>{{ order_item.order_item_subtotal|floatformat:2 }}</td>
+                        <td>
+                            <a href="{% url 'edit_order' order_item.order_item_id %}" class="text-dark" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <a href="javascript:void(0);" class="text-red-500 hover:text-red-700"
+                            onclick="delete_order_item({{ order_item.order_item_id }})" title="Delete">
                             <i class="fas fa-trash"></i>
+                        
                         </a>
-                    </td>
-                </tr>
+                         
+                     
+                    {% comment %} <a href="javascript:void(0);" class="text-red-500 hover:text-red-700" 
+                    onclick="delete_itemtype({{ item.type_id }})" title="Delete">
+                     <i class="fas fa-trash"></i>
+                 </a> {% endcomment %}
+             </td>
+         </tr>
+     
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No order items found.</td> <!-- Adjusted colspan to 8 -->
+                    </tr>
                 {% endfor %}
+                
+                        <!-- Edit Button -->
+                       
+                
+                        <!-- Delete Button with SweetAlert -->
+                    
             </tbody>
         </table>
     </div>
 </div><!--end card-->
 
-<!-- SweetAlert2 Script -->
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function delete_itemtype(type_id) {
+    function delete_order_item(order_item_id) {
         Swal.fire({
             title: 'Are you sure?',
-            text: "You want to delete this item type. This action cannot be undone.",
+            text: "You want to delete this order item. This action cannot be undone.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Yes, delete it!',
@@ -209,21 +237,22 @@ Home Page
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
+                // Create a form to submit the delete request via POST
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = `/item_type/delete/${type_id}/`;
+                form.action = `order-item/delete/${order_item_id}/`;
+               
+           // Add CSRF token dynamically
+           const csrfToken = document.createElement('input');
+           csrfToken.type = 'hidden';
+           csrfToken.name = 'csrfmiddlewaretoken';
+           csrfToken.value = '{{ csrf_token }}';
+           form.appendChild(csrfToken);
 
-                // Add CSRF token dynamically
-                const csrfToken = document.createElement('input');
-                csrfToken.type = 'hidden';
-                csrfToken.name = 'csrfmiddlewaretoken';
-                csrfToken.value = '{{ csrf_token }}';
-                form.appendChild(csrfToken);
-
-                document.body.appendChild(form);
-                form.submit();
+           document.body.appendChild(form);
+           form.submit();
             }
         });
     }
-</script> 
+</script>
 {% endblock %}

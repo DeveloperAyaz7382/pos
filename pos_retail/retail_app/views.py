@@ -1,9 +1,12 @@
+import datetime
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Item_Type ,CompanyInfo,SalesmanInfo,Products , Stock,StockTracking, StockExpiry,Order,OrderItem 
 from .forms import CompanyInfoForm
 from django.contrib import messages
 from .models import OrderReturn
+from datetime import datetime
+
 
 
 def home(request):
@@ -535,89 +538,119 @@ def order_item_form(request, pk=None):
     })
 
 
-def addorder(request, pk=None):
-    if pk:
-        # Edit mode: fetch the existing OrderItem
-        order_item = get_object_or_404(OrderItem, pk=pk)
-    else:
-        # Add mode: no OrderItem exists
-        order_item = None
+def add_order(request, pk=None):
+    # Fetch the existing order item if pk is provided
+    order_item = get_object_or_404(OrderItem, pk=pk) if pk else None
 
     if request.method == 'POST':
-        # Fetch form data
-        order_customer_name = request.POST.get('order_customer_name')
-        order_date = request.POST.get('order_date')
-        order_payment_status = request.POST.get('order_payment_status')
-        item_id = request.POST.get('item_id')
-        order_item_quantity = request.POST.get('order_item_quantity')
-        order_item_unitprice = request.POST.get('order_item_unitprice')
-        order_item_discount = request.POST.get('order_item_discount')
-        order_item_description = request.POST.get('order_item_description')
+        try:
+            # Extract data from the request
+            order_customer_name = request.POST['order_customer_name']
+            order_date = request.POST['order_date']
+            order_payment_status = request.POST['order_payment_status']
+            item_id = int(request.POST['item_id'])
+            order_item_quantity = int(request.POST['order_item_quantity'])
+            order_item_unitprice = float(request.POST['order_item_unitprice'])
+            order_item_discount = float(request.POST['order_item_discount'])
+            order_item_description = request.POST['order_item_description']
 
-        # Fetch related model instances
-        item = get_object_or_404(Products, pk=item_id)
+            # Fetch related product
+            item = get_object_or_404(Products, pk=item_id)
 
-        if order_item:
-            # Update the existing OrderItem
-            order_item.order_customer_name = order_customer_name
-            order_item.order_date = order_date
-            order_item.order_payment_status = order_payment_status
-            order_item.item = item
-            order_item.order_item_quantity = order_item_quantity
-            order_item.order_item_unitprice = order_item_unitprice
-            order_item.order_item_discount = order_item_discount
-            order_item.order_item_description = order_item_description
-            order_item.save()
-        else:
-            # Create a new OrderItem
-            OrderItem.objects.create(
-                order_customer_name=order_customer_name,
-                order_date=order_date,
-                order_payment_status=order_payment_status,
-                item=item,
-                order_item_quantity=order_item_quantity,
-                order_item_unitprice=order_item_unitprice,
-                order_item_discount=order_item_discount,
-                order_item_description=order_item_description
-            )
+            # Update or create the OrderItem
+            if order_item:
+                order_item.order_customer_name = order_customer_name
+                order_item.order_date = order_date
+                order_item.order_payment_status = order_payment_status
+                order_item.item = item
+                order_item.order_item_quantity = order_item_quantity
+                order_item.order_item_unitprice = order_item_unitprice
+                order_item.order_item_discount = order_item_discount
+                order_item.order_item_description = order_item_description
+                order_item.save()
+            else:
+                OrderItem.objects.create(
+                    order_customer_name=order_customer_name,
+                    order_date=order_date,
+                    order_payment_status=order_payment_status,
+                    item=item,
+                    order_item_quantity=order_item_quantity,
+                    order_item_unitprice=order_item_unitprice,
+                    order_item_discount=order_item_discount,
+                    order_item_description=order_item_description
+                )
+            return redirect('add_order')
+        except Exception as e:
+            return render(request, 'add_order.html', {
+                'order_item': order_item,
+                'items': Products.objects.all(),
+                'error': str(e)
+            })
 
-        return redirect('order_item_list')  # Redirect to the order item list view
-
-    # Fetch items for the form
+    # Render the form
     items = Products.objects.all()
-
-    return render(request, 'addorder.html', {
-        'order_item': order_item,
-        'items': items,
-    })
+    order_items = OrderItem.objects.all()
+    return render(request, 'add_order.html', {'order_item': order_item, 'items': items ,'order_items': order_items })
 
     
-# Edit an existing order item
-def order_item_edit(request, pk):
+
+def edit_order(request, pk):
     order_item = get_object_or_404(OrderItem, pk=pk)
 
     if request.method == 'POST':
-        # Manually update the order item with data from POST request
-        order_item.order_item_quantity = request.POST.get('order_item_quantity', order_item.order_item_quantity)
-        order_item.order_item_unitprice = request.POST.get('order_item_unitprice', order_item.order_item_unitprice)
+        # Retrieve and safely update each field from POST data
+        order_item.order_customer_name = request.POST.get('order_customer_name', order_item.order_customer_name)
+        
+        # Make sure the date is correctly formatted (assuming the input is in YYYY-MM-DD format)
+        order_date = request.POST.get('order_date', order_item.order_date)
+        if order_date:
+            try:
+                order_item.order_date = datetime.strptime(order_date, '%Y-%m-%d')
+            except ValueError:
+                pass  # Keep the original value if date is invalid
+        
+        try:
+            order_item.order_item_quantity = int(request.POST.get('order_item_quantity', order_item.order_item_quantity))
+        except (ValueError, TypeError):
+            pass  # Keep the original value if conversion fails
+
+        try:
+            order_item.order_item_unitprice = float(request.POST.get('order_item_unitprice', order_item.order_item_unitprice))
+        except (ValueError, TypeError):
+            pass  # Keep the original value if conversion fails
+        
+        try:
+            order_item.order_item_discount = float(request.POST.get('order_item_discount', order_item.order_item_discount))
+        except (ValueError, TypeError):
+            pass  # Keep the original value if conversion fails
+
+        order_item.order_item_description = request.POST.get('order_item_description', order_item.order_item_description)
+        order_item.order_payment_status = request.POST.get('order_payment_status', order_item.order_payment_status)
+
+        # Save the updated order item
         order_item.save()
 
         # Redirect to order item list page after saving the changes
-        return redirect('order_item_list')
+        return redirect('add_order')
 
-    return render(request, 'order_item_edit.html', {'order_item': order_item})
+    # Fetch all items for dropdowns or related fields if needed
+    items = Products.objects.all()
 
-def order_item_delete(request, order_item_id):
-    # Use `order_item_id` instead of `id`
-    order_item = get_object_or_404(OrderItem, order_item_id=order_item_id)
+    return render(request, 'edit_order.html', {
+        'order_item': order_item,
+        'items': items,
+    })
+    
+    
+def delete_order_item(request, order_item_id):
+    order_item = get_object_or_404(OrderItem, pk=order_item_id)
 
-    if request.method == 'POST':
-        # Delete the order item after confirmation
-        order_item.delete()
-        return redirect('order_item_list')  # Redirect to the order item list after deletion
+    if request.method == 'POST':  # Ensure the method is POST
+        order_item.delete()  # Perform the deletion
+        return redirect('add_order')  # Redirect after successful deletion
 
+    # If the request method is GET, display the confirmation page
     return render(request, 'order_item_delete_confirm.html', {'order_item': order_item})
-
 
 # OrderReturn Views
 def order_return_list(request):
@@ -634,6 +667,8 @@ def add_order_return(request):
         OrderReturn.objects.create(order=order, return_reason=return_reason, return_date=return_date)
         return redirect('order_return_list')
     orders = Order.objects.all()
+   
+    
     return render(request, 'add_order_return.html', {'orders': orders})
 
 

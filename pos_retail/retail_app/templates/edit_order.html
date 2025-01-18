@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+
+
+
+<div class="card"> 
+    <div class="card-body">
+        <h6 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Edit Order</h6>
+        <form action="{% url 'edit_order' order_item.pk %}" method="POST">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <!-- Customer Name Field -->
+                <div class="mb-12">
+                    <label for="order_customer_name" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Customer Name <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        name="order_customer_name" 
+                        class="form-control" 
+                        id="order_customer_name" 
+                        placeholder="Enter Customer Name" 
+                        value="{{ order_item.order_customer_name }}" 
+                        required>
+                </div>
+
+                <!-- Order Date -->
+                <div class="mb-12">
+                    <label for="order_date" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                       Order Date <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="date" 
+                        name="order_date" 
+                        class="form-control" 
+                        id="order_date" 
+                        value="{{ order_item.order_date }}" 
+                        required>
+                </div>
+
+        
+             <!-- Item Field -->
+             <div class="mb-12">
+                <label for="item_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Item <span class="text-red-500">*</span>
+                </label>
+                <select class="form-select" name="item_id" id="item_id" required>
+                    {% for item in items %}
+                    <option value="{{ item.pk }}" {% if order_item and order_item.item.pk == item.pk %}selected{% endif %}>
+                        {{ item.item_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+                 <!-- Quantity Field -->
+                 <div class="mb-12">
+                    <label for="order_item_quantity" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                       Quantity <span class="text-red-500">*</span>
+                    </label>
+                    <input   
+                    type="number" 
+                    class="form-control" 
+                    name="order_item_quantity" 
+                    id="order_item_quantity" 
+                    value="{% if order_item %}{{ order_item.order_item_quantity }}{% else %}0{% endif %}" 
+                    required>
+                </div>
+           
+
+                <!-- Unit Price Field -->
+                <div class="mb-12">
+                    <label for="order_item_unitprice" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Unit Price <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="number" 
+                    step="0.01" 
+                    class="form-control" 
+                    name="order_item_unitprice" 
+                    id="order_item_unitprice" 
+                    value="{% if order_item %}{{ order_item.order_item_unitprice }}{% else %}0.00{% endif %}" 
+                    required>
+                </div>
+           
+
+
+                   <!-- Discount Field -->
+            <div class="mb-12">
+            <label for="order_item_unitprice" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Discount Price <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="number" 
+                    step="0.01" 
+                    class="form-control" 
+                    name="order_item_discount" 
+                    id="order_item_discount" 
+                    value="{% if order_item %}{{ order_item.order_item_discount }}{% else %}0.00{% endif %}" 
+                    required>
+                </div>
+          
+
+          <!-- Description Field -->
+          <div class="mb-12">
+            <label for="order_item_unitprice" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Description <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="text" 
+                    class="form-control" 
+                    name="order_item_description" 
+                    id="order_item_description" 
+                    value="{% if order_item %}{{ order_item.order_item_description }}{% else %}{% endif %}" 
+                    required>
+                </div>
+          
+
+                    <!-- Payment Status Field -->
+          <div class="mb-12">
+            <label for="order_payment_status" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Payment Status <span class="text-red-500">*</span>
+                    </label>
+                    <select name="order_payment_status" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" required>
+                        <option value="Paid" {% if order_item and order_item.order_payment_status == 'Paid' %} selected {% endif %}>Paid</option>
+                        <option value="Unpaid" {% if order_item and order_item.order_payment_status == 'Unpaid' %} selected {% endif %}>Unpaid</option>
+                    </select>
+                </div>
+            </div>
+
+                <!-- Other fields remain unchanged -->
+
+                <!-- Form Actions -->
+                <div class="flex justify-end gap-3">
+                    <!-- Cancel Button -->
+                    <a href="{% url 'add_order' %}" 
+                        class="px-4 py-2 text-sm font-medium text-red-500 transition-all bg-white border border-red-500 rounded-md hover:bg-red-500 hover:text-white dark:bg-gray-800 dark:border-red-500 dark:hover:bg-red-500/10 focus:ring focus:ring-red-200">
+                        <i data-lucide="x" class="inline-block mr-1"></i>Cancel
+                    </a>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        class="px-4 py-2 text-sm font-medium text-white transition-all bg-custom-500 border border-custom-500 rounded-md hover:bg-custom-600 hover:border-custom-600 focus:ring focus:ring-custom-200">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
