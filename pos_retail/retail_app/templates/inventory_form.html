@@ -1,33 +1,53 @@
 {% extends 'base.html' %}
-{% load static %}  <!-- Add this line to load static files -->
-
+{% load static %}
+ 
 {% block title %}
 Home Page
 {% endblock %}
 
 {% block content %}
-    <div class="container mt-5">
-        <!-- Add/Edit Form -->
-        <h1 class="text-center">
-            {% if inventory %}Edit Inventory{% else %}Add Inventory{% endif %}
-        </h1>
-        <form method="post" class="mb-5" >
+
+<div class="card"> 
+    <div class="card-body">
+        <h6 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Add Inventory</h6>
+        <form method="post">
             {% csrf_token %}
-            
-            <div class="mb-3">
-                <label for="item_name" class="form-label">Item Name</label>
-                <input type="text" class="form-control" id="item_name" name="item_name"
-                    value="{% if inventory %}{{ inventory.item_name }}{% endif %}" required>
-            </div>
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <!-- Customer Name Field -->
+                <div class="mb-12">
+                    <label for="item_name" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                     Item Name <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        name="item_name" 
+                        class="form-control" 
+                        id="item_name" 
+                        placeholder="Enter Item Name" 
+                        value="{% if inventory %}{{ inventory.item_name }}{% endif %}"
+                        required>
+                </div>
 
-            <div class="mb-3">
-                <label for="item_formula" class="form-label">Formula Tablets</label>
-                <input type="text" class="form-control" id="item_formula" name="item_formula"
-                    value="{% if inventory %}{{ inventory.item_formula }}{% endif %}" required>
-            </div>
+                <!-- Order Date -->
+                <div class="mb-12">
+                    <label for="item_formula" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                       Formula Tablete <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        name="item_formula" 
+                        class="form-control" 
+                        id="item_formula" 
+                        value="{% if inventory %}{{ inventory.item_formula }}{% endif %}" 
+                        required>
+                </div>
+        
 
-            <div class="mb-3">
-                <label for="type_id" class="form-label">Item Type</label>
+             <!-- Item Type Field -->
+             <div class="mb-12">
+                <label for="type_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Item Type <span class="text-red-500">*</span>
+                </label>
                 <select class="form-select" id="type_id" name="type_id" required>
                     <option value="" disabled {% if not inventory %}selected{% endif %}>Select Type</option>
                     {% for type in types %}
@@ -37,55 +57,82 @@ Home Page
                     {% endfor %}
                 </select>
             </div>
-            
-            <div class="mb-3">
-                <label for="company_id" class="form-label">Company</label>
-                <select class="form-select" id="company_id" name="company_id" required>
-                    <option value="" disabled {% if not inventory %}selected{% endif %}>Select Company</option>
-                    {% for company in companies %}
-                        <option value="{{ company.company_id }}" {% if inventory and inventory.company_id_id == company.company_id %}selected{% endif %}>
-                            {{ company.company_name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div class="mb-3">
-                <label for="item_price" class="form-label">Unit Price</label>
-                <input type="number" class="form-control" id="item_price" name="item_price"
-                    value="{% if inventory %}{{ inventory.item_price }}{% endif %}" required>
-            </div>
-            {% comment %} <div class="mb-3">
-                <label for="item_status" class="form-label">Status</label>
-                <select class="form-select" id="item_status" name="item_status" required>
-                    <option value="1" {% if not inventory or inventory.item_status == 1 %}selected{% endif %}>Active</option>
-                    <option value="0" {% if inventory and inventory.item_status == 0 %}selected{% endif %}>Inactive</option>
-                </select>
-            </div> {% endcomment %}
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+                   <!-- Item Company Field -->
+                   <div class="mb-12">
+                    <label for="company_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Item Company <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="company_id" name="company_id" required>
+                        <option value="" disabled {% if not inventory %}selected{% endif %}>Select Company</option>
+                        {% for company in companies %}
+                            <option value="{{ company.company_id }}" {% if inventory and inventory.company_id_id == company.company_id %}selected{% endif %}>
+                                {{ company.company_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+            
+                <!-- Unit Price Field -->
+                <div class="mb-12">
+                    <label for="item_price" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Unit Price <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="number" 
+                    step="0.01" 
+                    class="form-control" 
+                    name="item_price" 
+                    id="item_price" 
+                    value="{% if inventory %}{{ inventory.item_price }}{% endif %}" 
+                    required>
+                </div>
+           
+
+
+            <!-- Form Actions -->
+            <div class="flex justify-end gap-3">
+                <!-- Cancel Button -->
+                <button 
+                    type="button" 
+                    class="px-4 py-2 text-sm font-medium text-red-500 transition-all bg-white border border-red-500 rounded-md hover:bg-red-500 hover:text-white dark:bg-gray-800 dark:border-red-500 dark:hover:bg-red-500/10 focus:ring focus:ring-red-200">
+                    <i data-lucide="x" class="inline-block mr-1"></i>Cancel
+                </button>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="px-4 py-2 text-sm font-medium text-white transition-all bg-custom-500 border border-custom-500 rounded-md hover:bg-custom-600 hover:border-custom-600 focus:ring focus:ring-custom-200">
+                    Submit
+                </button>
+            </div>
         </form>
+    </div>
+</div>
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-light text-white">
-                <h5>Inventory List</h5>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Item ID</th>
-                            <th>Item Name</th>
-                            <th>Formula Tablets</th>
-                            <th>Type</th>
-                            <th>Company</th>
-                            <th>Unit Price</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in items %}
+<!-- Content Start -->
+
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-5 text-30">Item Details</h6>
+        
+        <table id="example" class="bordered group display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th>Formula Tablets</th>
+                    <th>Type</th>
+                    <th>Company</th>
+                    <th>Unit Price</th>
+                    <th>Status</th>
+                    <th>Actions</th> 
+                </tr>
+            </thead> 
+            <tbody>
+
+                {% for item in items %}
                         <tr>
                             <td>{{ item.item_id }}</td>
                             <td>{{ item.item_name }}</td>
@@ -107,9 +154,47 @@ Home Page
                             <td colspan="6" class="text-center">No Inventory items available.</td>
                         </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                        <!-- Edit Button -->
+                       
+                
+                        <!-- Delete Button with SweetAlert -->
+                    
+            </tbody>
+        </table>
     </div>
-    {% endblock %}
+</div><!--end card--> 
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function delete_order_item(order_item_id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to delete this order item. This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Create a form to submit the delete request via POST
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `order-item/delete/${order_item_id}/`;
+               
+           // Add CSRF token dynamically
+           const csrfToken = document.createElement('input');
+           csrfToken.type = 'hidden';
+           csrfToken.name = 'csrfmiddlewaretoken';
+           csrfToken.value = '{{ csrf_token }}';
+           form.appendChild(csrfToken);
+
+           document.body.appendChild(form);
+           form.submit();
+            }
+        });
+    }
+</script>
+{% endblock %}
+ 

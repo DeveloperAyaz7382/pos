@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
-{% load static %}  <!-- Add this line to load static files -->
+{% load static %}
 
 {% block title %}
 Home Page
 {% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <!-- Add Salesman Form -->
-    <div class="card p-4 mb-5 shadow-sm">
-        <h4 class="mb-3">Add Salesman for {{ company.company_name }}</h4>
+
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-3">Add Salesman for {{ company.company_name }}</h6>
         <form method="POST">
             {% csrf_token %}
             {% if messages %}
@@ -19,125 +19,148 @@ Home Page
                     {% endfor %}
                 </div>
             {% endif %}
-            <div class="row g-3">
-                <div class="col-md-12">
-                    <label for="salesman_name" class="form-label">Salesman Name</label>
-                    <input type="text" class="form-control" id="salesman_name" name="salesman_name" value="{{ request.POST.salesman_name }}" required>
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <!-- Type Name Field -->
+                <div class="mb-12">
+                    <label for="salesman_name" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Salesman Name <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="salesman_name" 
+                        name="salesman_name" 
+                        class="form-input w-full border-gray-300 dark:border-gray-700 focus:ring-custom-500 focus:border-custom-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" 
+                        value="{{ request.POST.salesman_name }}"
+                        placeholder="Enter Company Salesman" 
+                        required>
                 </div>
-                <div class="col-md-12">
-                    <label for="salesman_contact" class="form-label">Salesman Contact</label>
-                    <input type="text" class="form-control" id="salesman_contact" name="salesman_contact" value="{{ request.POST.salesman_contact }}" required>
+
+                <div class="mb-12">
+                    <label for="salesman_contact" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Salesman Contact <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        id="salesman_contact" 
+                        name="salesman_contact" 
+                        class="form-input w-full border-gray-300 dark:border-gray-700 focus:ring-custom-500 focus:border-custom-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" 
+                        value="{{ request.POST.salesman_contact }}"
+                        placeholder="Enter Company Contact" 
+                        required>
                 </div>
-                <div class="col-md-12">
-                    <label for="company" class="form-label">Salesman Company</label>
+
+
+                <div class="mb-12">
+                    <label for="company_email" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Company <span class="text-red-500">*</span>
+                    </label>
                     <select class="form-control" id="company" name="company" disabled>
                         <option value="{{ company.company_id }}" selected>
                             {{ company.company_name }}
                         </option>
                     </select>
                 </div>
+        
             </div>
-            <button type="submit" class="btn btn-primary mt-3">Add Salesman</button>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end gap-3">
+                <!-- Cancel Button -->
+                <button 
+                    type="button" 
+                    class="px-4 py-2 text-sm font-medium text-red-500 transition-all bg-white border border-red-500 rounded-md hover:bg-red-500 hover:text-white dark:bg-gray-800 dark:border-red-500 dark:hover:bg-red-500/10 focus:ring focus:ring-red-200">
+                    <i data-lucide="x" class="inline-block mr-1"></i>Cancel
+                </button>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="px-4 py-2 text-sm font-medium text-white transition-all bg-custom-500 border border-custom-500 rounded-md hover:bg-custom-600 hover:border-custom-600 focus:ring focus:ring-custom-200">
+                    Submit
+                </button>
+            </div>
         </form>
     </div>
-
-    <!-- Salesmen List -->
-    {% comment %} <div class="card shadow-sm">
-        <div class="card-header bg-success text-white">
-            <h5>Salesman List</h5>
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Salesman ID</th>
-                        <th>Salesman Name</th>
-                        <th>Salesman Contact</th>
-                        <th>Salesman Company</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for salesman in salesmen %}
-                    <tr>
-                        <td>{{ salesman.salesman_id }}</td>
-                        <td>{{ salesman.salesman_name }}</td>
-                        <td>{{ salesman.salesman_contact }}</td>
-                        <td>
-                            {% if salesman.company_id %}
-                                {{ salesman.company.company_name }}
-                            {% else %}
-                                Not Assigned
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="{% url 'salesman_edit' salesman.salesman_id %}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <a href="{% url 'salesman_delete' salesman.salesman_id %}" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i> Delete
-                            </a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center">No salesmen found for this company.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div> {% endcomment %}
-
-
-<div class="container my-5">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h5>Salesmen List</h5>
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Salesman ID</th>
-                        <th>Salesman Name</th>
-                        <th>Contact</th>
-                        <th>Company</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for salesman in salesmen %}
-<tr>
-    <td>{{ salesman.salesman_id }}</td>
-    <td>{{ salesman.salesman_name }}</td>
-    <td>{{ salesman.salesman_contact }}</td>
-    <td>
-        {% if salesman.company %}
-            {{ salesman.company.company_name }}
-        {% else %}
-            Not Assigned
-        {% endif %}
-    </td>
-    <td>
-        <a href="{% url 'salesman_edit' salesman.salesman_id %}" class="btn btn-warning btn-sm">
-            <i class="fas fa-edit"></i> Edit
-        </a>
-        <a href="{% url 'salesman_delete' salesman.salesman_id %}" class="btn btn-danger btn-sm">
-            <i class="fas fa-trash"></i> Delete
-        </a>
-    </td>
-</tr>
-{% empty %}
-<tr>
-    <td colspan="5" class="text-center">No salesmen found.</td>
-</tr>
-{% endfor %}
-
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
+
+<!-- Content Start -->
+
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-4 text-15">Salesman List</h6>
+        
+        <table id="example" class="bordered group display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Salesman ID</th>
+                    <th>Salesman Name</th>
+                    <th>Contact</th>
+                    <th>Company</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for salesman in salesmen %}
+                <tr>
+                    <td>{{ salesman.salesman_id }}</td>
+                    <td>{{ salesman.salesman_name }}</td>
+                    <td>{{ salesman.salesman_contact }}</td>
+                    <td>
+                        {% if salesman.company %}
+                            {{ salesman.company.company_name }}
+                        {% else %}
+                            Not Assigned
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'salesman_edit' salesman.salesman_id %}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'salesman_delete' salesman.salesman_id %}" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No salesmen found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div><!--end card-->
+
+<!-- SweetAlert2 Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function delete_itemtype(type_id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to delete this item type. This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/item_type/delete/${type_id}/`;
+
+                // Add CSRF token dynamically
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = 'csrfmiddlewaretoken';
+                csrfToken.value = '{{ csrf_token }}';
+                form.appendChild(csrfToken);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+</script>
 {% endblock %}
+

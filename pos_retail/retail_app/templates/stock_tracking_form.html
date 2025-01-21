@@ -1,4 +1,203 @@
 {% extends 'base.html' %}
+{% load static %}
+ 
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+
+<div class="card"> 
+    <div class="card-body">
+        <h6 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Add Tracking</h6>
+        <form method="post">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <!-- Customer Name Field -->
+                <div class="mb-12">
+                    <label for="item_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                     Item Name <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="item_id" name="item_id" required>
+                        {% for item in items %}
+                            <option value="{{ item.item_id }}">{{ item.item_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+{% comment %}            
+                <div class="mb-12">
+                <label for="salesman_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Salesman <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="salesman_id" name="salesman_id" required>
+                        <option value="" selected disabled>Choose a salesman...</option>
+                        {% for salesman in salesmen %}
+                            <option value="{{ salesman.salesman_id }}">{{ salesman.salesman_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div> {% endcomment %}
+
+
+                   {% comment %} <!-- Item Company Field -->
+                   <div class="mb-12">
+                    <label for="company_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Item Company <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="company_id" name="company_id" required>
+                        <option value="" disabled {% if not inventory %}selected{% endif %}>Select Company</option>
+                        {% for company in companies %}
+                            <option value="{{ company.company_id }}" {% if inventory and inventory.company_id_id == company.company_id %}selected{% endif %}>
+                                {{ company.company_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div> {% endcomment %}
+                
+                <div class="mb-12">
+                    <label for="tracking_stock_in" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        tracking_stock_in <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="number" 
+                    step="0.01" 
+                    class="form-control" 
+                    name="tracking_stock_in" 
+                    id="tracking_stock_in" 
+                    value="0" 
+                    required>
+                </div>
+           
+                <!-- Unit Price Field -->
+                <div class="mb-12">
+                    <label for="tracking_stock_out" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        tracking_stock_out <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="number" 
+                    step="0.01" 
+                    class="form-control" 
+                    name="tracking_stock_out" 
+                    id="tracking_stock_out" 
+                    value="0"
+                    required>
+                </div>
+
+                  <!-- tracking_remarks Field -->
+                  <div class="mb-12">
+                    <label for="tracking_stock_out" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        tracking_remarks <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="text" 
+                    step="0.01" 
+                    class="form-control" 
+                    name="tracking_remarks" 
+                    id="tracking_remarks" 
+                    value="tracking_remarks"
+                    required>
+                </div>
+           
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end gap-3">
+                <!-- Cancel Button -->
+                <button 
+                    type="button" 
+                    class="px-4 py-2 text-sm font-medium text-red-500 transition-all bg-white border border-red-500 rounded-md hover:bg-red-500 hover:text-white dark:bg-gray-800 dark:border-red-500 dark:hover:bg-red-500/10 focus:ring focus:ring-red-200">
+                    <i data-lucide="x" class="inline-block mr-1"></i>Cancel
+                </button>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="px-4 py-2 text-sm font-medium text-white transition-all bg-custom-500 border border-custom-500 rounded-md hover:bg-custom-600 hover:border-custom-600 focus:ring focus:ring-custom-200">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Content Start -->
+
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-5 text-30">Tracking Details</h6>
+        
+        <table id="example" class="bordered group display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Item</th>
+                    <th>Stock In</th>
+                    <th>Stock Out</th>
+                    <th>Current Stock</th>
+                    <th>Date</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead> 
+            <tbody>
+                {% for tracking in trackings %}
+                <tr>
+                    <td>{{ tracking.tracking_id }}</td>
+                    <td>{{ tracking.item_id }}</td>
+                    <td>{{ tracking.tracking_stock_in }}</td>
+                    <td>{{ tracking.tracking_stock_out }}</td>
+                    <td>{{ tracking.tracking_current_stock }}</td>
+                    <td>{{ tracking.tracking_transaction_date }}</td>
+                    <td>{{ tracking.tracking_remarks }}</td>
+                    <td>
+                        <a href="{% url 'stock_tracking_edit' tracking.tracking_id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'stock_tracking_delete' tracking.tracking_id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+                    
+            </tbody>
+        </table>
+    </div>
+</div><!--end card--> 
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function delete_order_item(order_item_id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to delete this order item. This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Create a form to submit the delete request via POST
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `order-item/delete/${order_item_id}/`;
+               
+           // Add CSRF token dynamically
+           const csrfToken = document.createElement('input');
+           csrfToken.type = 'hidden';
+           csrfToken.name = 'csrfmiddlewaretoken';
+           csrfToken.value = '{{ csrf_token }}';
+           form.appendChild(csrfToken);
+
+           document.body.appendChild(form);
+           form.submit();
+            }
+        });
+    }
+</script>
+{% endblock %}
+
+{% comment %} 
+
+
+{% extends 'base.html' %}
 {% load static %}  <!-- Add this line to load static files -->
 
 {% block title %}
@@ -38,3 +237,4 @@ Home Page
         </form>
     </div>
     {% endblock %}
+   {% endcomment %}

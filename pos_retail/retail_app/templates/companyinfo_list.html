@@ -1,95 +1,190 @@
 {% extends 'base.html' %}
-{% load static %}  <!-- Add this line to load static files -->
+{% load static %}
 
 {% block title %}
 Home Page
 {% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <!-- Add Item Type Form -->
-    <div class="card p-4 mb-5 shadow-sm">
-        <h4 class="mb-3">Add Company</h4>
-        <form method="POST" action="{% url 'companyinfo_create' %}">
+
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Add Company</h6>
+        <form action="{% url 'companyinfo_create' %}" method="POST">
             {% csrf_token %}
-            {% if messages %}
-                <div class="alert alert-{{ messages.0.tags }}">
-                    {% for message in messages %}
-                        <p>{{ message }}</p>
-                    {% endfor %}
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <!-- Type Name Field -->
+                <div class="mb-12">
+                    <label for="company_name" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Company Name <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="company_name" 
+                        name="company_name" 
+                        class="form-input w-full border-gray-300 dark:border-gray-700 focus:ring-custom-500 focus:border-custom-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" 
+                        value="{{ company_name.company_name|default:"" }}" 
+                        placeholder="Enter Company Name" 
+                        required>
                 </div>
-            {% endif %}
-            <div class="row g-3">
-                <div class="col-md-12">
-                    <label for="company_name" class="form-label">Company Name</label>
-                    <input type="text" class="form-control" id="company_name" name="company_name" value="{{ company_name.company_name|default:"" }}" required>
+
+                <div class="mb-12">
+                    <label for="company_contact" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Company Contact <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        id="company_contact" 
+                        name="company_contact" 
+                        class="form-input w-full border-gray-300 dark:border-gray-700 focus:ring-custom-500 focus:border-custom-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" 
+                        value="{{ company_name.company_contact|default:"" }}" 
+                        placeholder="Enter Company Contact" 
+                        required>
                 </div>
-                <div class="col-md-12">
-                    <label for="company_contact" class="form-label">Company Contact</label>
-                    <input type="text" class="form-control" id="company_contact" name="company_contact" value="{{ company_contact.company_contact|default:"" }}" required>
+
+
+                <div class="mb-12">
+                    <label for="company_email" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Company Email<span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="email" 
+                        id="company_email" 
+                        name="company_email" 
+                        class="form-input w-full border-gray-300 dark:border-gray-700 focus:ring-custom-500 focus:border-custom-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" 
+                        value="{{ company_name.company_email|default:"" }}" 
+                        placeholder="Enter Email Name" 
+                        required>
                 </div>
-                <div class="col-md-12">
-                    <label for="company_email" class="form-label">Company Email</label>
-                    <input type="email" class="form-control" id="company_email" name="company_email" value="{{ company_email.company_email|default:"" }}" required>
+           
+                <div class="mb-12">
+                    <label for="company_address" class="block mb-6s text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Company Address<span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="textarea" 
+                        id="company_address" 
+                        name="company_address" 
+                        class="form-input w-full border-gray-300 dark:border-gray-700 focus:ring-custom-500 focus:border-custom-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" 
+                        value="{{ company_name.company_address|default:"" }}" 
+                        placeholder="Enter company_address" 
+                        required>
                 </div>
-                <div class="col-md-12">
-                    <label for="company_address" class="form-label">Company Address</label>
-                    <textarea id="company_address" name="company_address" class="form-control" rows="4" value="{{ company_address.company_address|default:"" }}" required></textarea>
-                </div>
+
+                {% comment %} <div class="mb-12">
+                    <label for="company_address" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Company Description <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="textarea" 
+                        id="company_address" 
+                        name="company_address" 
+                        class="form-input w-full border-gray-300 dark:border-gray-700 focus:ring-custom-500 focus:border-custom-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500" 
+                        value="{{ company_name.company_address|default:"" }}" 
+                        placeholder="Enter company_address" 
+                        required>
+                </div> {% endcomment %}
             </div>
-            <button type="submit" class="btn btn-primary mt-3">Add Company</button>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end gap-3">
+                <!-- Cancel Button -->
+                <button 
+                    type="button" 
+                    class="px-4 py-2 text-sm font-medium text-red-500 transition-all bg-white border border-red-500 rounded-md hover:bg-red-500 hover:text-white dark:bg-gray-800 dark:border-red-500 dark:hover:bg-red-500/10 focus:ring focus:ring-red-200">
+                    <i data-lucide="x" class="inline-block mr-1"></i>Cancel
+                </button>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="px-4 py-2 text-sm font-medium text-white transition-all bg-custom-500 border border-custom-500 rounded-md hover:bg-custom-600 hover:border-custom-600 focus:ring focus:ring-custom-200">
+                    Submit
+                </button>
+            </div>
         </form>
     </div>
-
-    <!-- Types Table -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-light  text-white">
-            <h5 class="mb-0" >Company List</h5>
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered ">
-                <thead class="table-light">
-                    <tr>
-                        <th>Company ID</th>
-                        <th>Company Name</th>
-                        <th>Contact</th>
-                        <th>Email</th>
-                        <th>Address</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    {% for company in companies %}
-                    <tr>
-                        <td>{{ company.company_id }}</td>
-                        <td>{{ company.company_name }}</td>
-                        <td>{{ company.company_contact }}</td>
-                        <td>{{ company.company_email }}</td>
-                        <td>{{ company.company_address }}</td>
-                        <td>
-                            <a href="{% url 'companyinfo_update' company.company_id %}" class="text-dark">
-                                <i class="fas fa-edit"></i> 
-                            </a>
-                            <a href="{% url 'companyinfo_delete' company.company_id %}" class="text-dark">
-                                <i class="fas fa-trash"></i> 
-                            </a>
-                            <a href="{% url 'create_salesman' company.company_id %}" class="text-dark">
-                                <i class="fas fa-user-plus"></i> 
-                            </a>
-                            
-                                
-                                
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center">No Company available.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
+
+<!-- Content Start -->
+
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-4 text-15">Type List</h6>
+        
+        <table id="example" class="bordered group display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Company ID</th>
+                    <th>Company Name</th>
+                    <th>Contact</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in companies %}
+                <tr>
+                    <td>{{ company.company_id }}</td>
+                    <td>{{ company.company_name }}</td>
+                    <td>{{ company.company_contact }}</td>
+                    <td>{{ company.company_email }}</td>
+                    <td>{{ company.company_address }}</td>
+                    <td>
+                        <a href="{% url 'companyinfo_update' company.company_id %}" class="text-dark">
+                            <i class="fas fa-edit"></i> 
+                        </a>
+                        <a href="{% url 'companyinfo_delete' company.company_id %}" class="text-dark">
+                            <i class="fas fa-trash"></i> 
+                        </a>
+                        <a href="{% url 'create_salesman' company.company_id %}" class="text-dark">
+                            <i class="fas fa-user-plus"></i> 
+                        </a>
+                        
+                            
+                            
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No Company available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div><!--end card-->
+
+<!-- SweetAlert2 Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function delete_itemtype(type_id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to delete this item type. This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/item_type/delete/${type_id}/`;
+
+                // Add CSRF token dynamically
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = 'csrfmiddlewaretoken';
+                csrfToken.value = '{{ csrf_token }}';
+                form.appendChild(csrfToken);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+</script>
 {% endblock %}

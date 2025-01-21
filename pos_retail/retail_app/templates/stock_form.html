@@ -1,42 +1,187 @@
 {% extends 'base.html' %}
-{% load static %}  <!-- Add this line to load static files -->
-
+{% load static %}
+ 
 {% block title %}
 Home Page
 {% endblock %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h1 class="text-center">Add Stock</h1>
-        <form method="post" action="">
+
+<div class="card"> 
+    <div class="card-body">
+        <h6 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Add Stock Inventory</h6>
+        <form method="post">
             {% csrf_token %}
-            <div class="mb-3">
-                <label for="item_id" class="form-label">Select Item</label>
-                <select class="form-select" id="item_id" name="item_id" required>
-                    <option value="" selected disabled>Choose an item...</option>
-                    {% for item in inventory_items %}
-                        <option value="{{ item.item_id }}">{{ item.item_name }}</option>
-                    {% endfor %}
-                </select>
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <!-- Customer Name Field -->
+                <div class="mb-12">
+                    <label for="item_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                     Item Name <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="item_id" name="item_id" required>
+                        <option value="" selected disabled>Choose an item...</option>
+                        {% for item in inventory_items %}
+                            <option value="{{ item.item_id }}">{{ item.item_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+           
+                <div class="mb-12">
+                <label for="salesman_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Salesman <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="salesman_id" name="salesman_id" required>
+                        <option value="" selected disabled>Choose a salesman...</option>
+                        {% for salesman in salesmen %}
+                            <option value="{{ salesman.salesman_id }}">{{ salesman.salesman_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                   {% comment %} <!-- Item Company Field -->
+                   <div class="mb-12">
+                    <label for="company_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Item Company <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="company_id" name="company_id" required>
+                        <option value="" disabled {% if not inventory %}selected{% endif %}>Select Company</option>
+                        {% for company in companies %}
+                            <option value="{{ company.company_id }}" {% if inventory and inventory.company_id_id == company.company_id %}selected{% endif %}>
+                                {{ company.company_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div> {% endcomment %}
+                
+                <div class="mb-12">
+                    <label for="stock_quantity" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Stock Quantity <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="number" 
+                    step="0.01" 
+                    class="form-control" 
+                    name="stock_quantity" 
+                    id="stock_quantity" 
+                    value="stock_quantity" 
+                    required>
+                </div>
+           
+                <!-- Unit Price Field -->
+                <div class="mb-12">
+                    <label for="stock_unitprice" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Unit Price <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="number" 
+                    step="0.01" 
+                    class="form-control" 
+                    name="stock_unitprice" 
+                    id="stock_unitprice" 
+                    value="stock_unitprice"
+                    required>
+                </div>
+           
             </div>
-            <div class="mb-3">
-                <label for="salesman_id" class="form-label">Select Salesman</label>
-                <select class="form-select" id="salesman_id" name="salesman_id" required>
-                    <option value="" selected disabled>Choose a salesman...</option>
-                    {% for salesman in salesmen %}
-                        <option value="{{ salesman.salesman_id }}">{{ salesman.salesman_name }}</option>
-                    {% endfor %}
-                </select>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end gap-3">
+                <!-- Cancel Button -->
+                <button 
+                    type="button" 
+                    class="px-4 py-2 text-sm font-medium text-red-500 transition-all bg-white border border-red-500 rounded-md hover:bg-red-500 hover:text-white dark:bg-gray-800 dark:border-red-500 dark:hover:bg-red-500/10 focus:ring focus:ring-red-200">
+                    <i data-lucide="x" class="inline-block mr-1"></i>Cancel
+                </button>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="px-4 py-2 text-sm font-medium text-white transition-all bg-custom-500 border border-custom-500 rounded-md hover:bg-custom-600 hover:border-custom-600 focus:ring focus:ring-custom-200">
+                    Submit
+                </button>
             </div>
-            <div class="mb-3">
-                <label for="stock_quantity" class="form-label">Stock Quantity</label>
-                <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" required>
-            </div>
-            <div class="mb-3">
-                <label for="stock_unitprice" class="form-label">Unit Price</label>
-                <input type="number" step="0.01" class="form-control" id="stock_unitprice" name="stock_unitprice" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
-    {% endblock %}
+</div>
+
+<!-- Content Start -->
+
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-5 text-30">Order Details</h6>
+        
+        <table id="example" class="bordered group display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Item</th>
+                    <th>Salesman</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Value</th>
+                    <th>Entry Date</th> 
+                </tr>
+            </thead> 
+            <tbody>
+
+                {% for stock in stocks%}
+                <tr>
+                    <td>{{ stock.stock_id}}</td>
+                    <td>{{ stock.item.item_name}}</td>
+                    <td>{{ stock.salesman.salesman_name}}</td>
+                    <td>{{ stock.stock_quantity}}</td>
+                    <td>{{ stock.stock_unitprice}}</td>
+                    <td>{{ stock.stock_total_value}}</td>
+                    <td>{{ stock.stock_entry_date}}</td>
+                    <td>
+                        <a href="{% url 'stock_edit' stock.stock_id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'stock_delete' stock.stock_id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+                
+              
+                    
+            </tbody>
+            {% endfor %}
+                    
+            </tbody>
+        </table>
+    </div>
+</div><!--end card--> 
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function delete_order_item(order_item_id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to delete this order item. This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Create a form to submit the delete request via POST
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `order-item/delete/${order_item_id}/`;
+               
+           // Add CSRF token dynamically
+           const csrfToken = document.createElement('input');
+           csrfToken.type = 'hidden';
+           csrfToken.name = 'csrfmiddlewaretoken';
+           csrfToken.value = '{{ csrf_token }}';
+           form.appendChild(csrfToken);
+
+           document.body.appendChild(form);
+           form.submit();
+            }
+        });
+    }
+</script>
+{% endblock %}
+
+

@@ -249,6 +249,7 @@ def delete_inventory(request, item_id):
 def stock_form_view(request):
     inventory_items = Products.objects.all()
     salesmen = SalesmanInfo.objects.all()
+    stocks = Stock.objects.all()
 
     if request.method == 'POST':
         item_id = request.POST.get('item_id')
@@ -265,11 +266,13 @@ def stock_form_view(request):
             stock_quantity=stock_quantity,
             stock_unitprice=stock_unitprice
         )
-        return redirect('stock_list')
+        return redirect('stock_form')
 
     context = {
         'inventory_items': inventory_items,
         'salesmen': salesmen,
+        'stocks':stocks,
+        
     }
     return render(request, 'stock_form.html', context)
 
@@ -331,10 +334,11 @@ def stock_tracking_form_view(request):
             tracking_current_stock=current_stock,
             tracking_remarks=remarks
         )
-        return redirect('stock_tracking_list')
+        return redirect('stock_tracking_form')
 
     items = Products.objects.all()
-    return render(request, 'stock_tracking_form.html', {'items': items})
+    trackings = StockTracking.objects.all()
+    return render(request, 'stock_tracking_form.html', {'items': items,'trackings': trackings})
 
 def stock_tracking_edit_view(request, tracking_id):
     tracking = get_object_or_404(StockTracking, tracking_id=tracking_id)
@@ -383,10 +387,12 @@ def stock_expiry_form_view(request):
             quantity_expiry=quantity_expiry,
             expiry_status=expiry_status
         )
-        return redirect('stock_expiry_list')
+        return redirect('stock_expiry_form')
+    
 
     items = Products.objects.all()
-    return render(request, 'stock_expiry_form.html', {'items': items})
+    expiries = StockExpiry.objects.all()
+    return render(request, 'stock_expiry_form.html', {'items': items,'expiries': expiries})
 
 # Edit an existing stock expiry record
 def stock_expiry_edit_view(request, expiry_id):
@@ -399,7 +405,7 @@ def stock_expiry_edit_view(request, expiry_id):
         expiry.quantity_expiry = request.POST.get('quantity_expiry')
         expiry.expiry_status = request.POST.get('expiry_status', 1)
         expiry.save()
-        return redirect('stock_expiry_list')
+        return redirect('stock_expiry_form')
 
     items = Products.objects.all()
     return render(request, 'stock_expiry_form.html', {'expiry': expiry, 'items': items})
@@ -409,7 +415,7 @@ def stock_expiry_delete_view(request, expiry_id):
     expiry = get_object_or_404(StockExpiry, expiry_id=expiry_id)
     if request.method == 'POST':
         expiry.delete()
-        return redirect('stock_expiry_list')
+        return redirect('stock_expiry_form')
     return render(request, 'stock_expiry_delete.html', {'expiry': expiry})
 
 

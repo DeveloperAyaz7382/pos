@@ -1,4 +1,204 @@
 {% extends 'base.html' %}
+{% load static %}
+ 
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block content %}
+
+<div class="card"> 
+    <div class="card-body">
+        <h6 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Add Expiry</h6>
+        <form method="post">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <!-- Customer Name Field -->
+                <div class="mb-12">
+                    <label for="item_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                     Item Name <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="item_id" name="item_id" required>
+                        {% for item in items %}
+                            <option value="{{ item.item_id }}">{{ item.item_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+{% comment %}            
+                <div class="mb-12">
+                <label for="salesman_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Salesman <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="salesman_id" name="salesman_id" required>
+                        <option value="" selected disabled>Choose a salesman...</option>
+                        {% for salesman in salesmen %}
+                            <option value="{{ salesman.salesman_id }}">{{ salesman.salesman_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div> {% endcomment %}
+
+
+                   {% comment %} <!-- Item Company Field -->
+                   <div class="mb-12">
+                    <label for="company_id" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Item Company <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="company_id" name="company_id" required>
+                        <option value="" disabled {% if not inventory %}selected{% endif %}>Select Company</option>
+                        {% for company in companies %}
+                            <option value="{{ company.company_id }}" {% if inventory and inventory.company_id_id == company.company_id %}selected{% endif %}>
+                                {{ company.company_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div> {% endcomment %}
+                
+                <div class="mb-12">
+                    <label for="manufacture_date" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        manufacture_date <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="date" 
+                    class="form-control" 
+                    name="manufacture_date" 
+                    id="manufacture_date" 
+                    value={% if expiry %}{{ expiry.manufacture_date }}{% endif %} 
+                    required>
+                </div>
+
+                <div class="mb-12">
+                    <label for="manufacture_date" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        expiry_date <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="date" 
+                    class="form-control" 
+                    name="expiry_date" 
+                    id="expiry_date" 
+                    value={% if expiry %}{{ expiry.expiry_date }}{% endif %} 
+                    required>
+                </div>
+                <div class="mb-12">
+                    <label for="quantity_expiry" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        quantity_expiry <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                    type="number" 
+                    step="0.01" 
+                    class="form-control" 
+                    name="quantity_expiry" 
+                    id="quantity_expiry" 
+                    value={% if expiry %}{{ expiry.quantity_expiry }}{% endif %} 
+                    required>
+                </div>
+            
+                  <!-- expiry_status Field -->
+                  <div class="mb-12">
+                    <label for="expiry_status" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        expiry_status <span class="text-red-500">*</span>
+                    </label>
+                    <select class="form-select" id="expiry_status" name="expiry_status" required>
+                        <option value="1" {% if expiry and expiry.expiry_status == 1 %}selected{% endif %}>Active</option>
+                        <option value="0" {% if expiry and expiry.expiry_status == 0 %}selected{% endif %}>Expired</option>
+                    </select>
+                </div>
+           
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end gap-3">
+                <!-- Cancel Button -->
+                <button 
+                    type="button" 
+                    class="px-4 py-2 text-sm font-medium text-red-500 transition-all bg-white border border-red-500 rounded-md hover:bg-red-500 hover:text-white dark:bg-gray-800 dark:border-red-500 dark:hover:bg-red-500/10 focus:ring focus:ring-red-200">
+                    <i data-lucide="x" class="inline-block mr-1"></i>Cancel
+                </button>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="px-4 py-2 text-sm font-medium text-white transition-all bg-custom-500 border border-custom-500 rounded-md hover:bg-custom-600 hover:border-custom-600 focus:ring focus:ring-custom-200">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Content Start -->
+
+<div class="card">
+    <div class="card-body">
+        <h6 class="mb-5 text-30">Expiry Details</h6>
+        
+        <table id="example" class="bordered group display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Manufacture Date</th>
+                    <th>Expiry Date</th>
+                    <th>Quantity Expired</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead> 
+            <tbody>
+                {% for expiry in expiries %}
+                <tr>
+                    <td>{{ expiry.item.item_name }}</td>
+                    <td>{{ expiry.manufacture_date }}</td>
+                    <td>{{ expiry.expiry_date }}</td>
+                    <td>{{ expiry.quantity_expiry }}</td>
+                    <td>{{ expiry.expiry_status }}</td>
+                    <td>
+                        <a href="{% url 'stock_expiry_edit' expiry.expiry_id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'stock_expiry_delete' expiry.expiry_id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+                    
+            </tbody>
+        </table>
+    </div>
+</div><!--end card--> 
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function delete_order_item(order_item_id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to delete this order item. This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Create a form to submit the delete request via POST
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `order-item/delete/${order_item_id}/`;
+               
+           // Add CSRF token dynamically
+           const csrfToken = document.createElement('input');
+           csrfToken.type = 'hidden';
+           csrfToken.name = 'csrfmiddlewaretoken';
+           csrfToken.value = '{{ csrf_token }}';
+           form.appendChild(csrfToken);
+
+           document.body.appendChild(form);
+           form.submit();
+            }
+        });
+    }
+</script>
+{% endblock %}
+
+
+{% comment %} 
+{% extends 'base.html' %}
 {% load static %}  <!-- Add this line to load static files -->
 
 {% block title %}
@@ -42,4 +242,4 @@ Home Page
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
-    {% endblock %}
+    {% endblock %} {% endcomment %}

@@ -29,7 +29,7 @@ urlpatterns = [
 
     path('stock-form/', views.stock_form_view, name='stock_form'),  # Define this pattern
     path('stock-list/', views.stock_list_view, name='stock_list'),
-    path('stock-edit/<int:stock_id>/', views.stock_edit_view, name='stock_edit'),
+    path('stock-edit/<int:stock_id>/', views.stock_edit_view, name='stock_edit'), 
     path('stock-delete/<int:stock_id>/', views.stock_delete_view, name='stock_delete'),
     
     
